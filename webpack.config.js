@@ -17,8 +17,8 @@ module.exports = {
       ]
     : './index.jsx',
   context: path.resolve(__dirname, './src'),
-  mode: 'development',
-  devtool: 'inline-source-map',
+  mode: 'production',
+  devtool: false,
   performance: {
     hints: false,
   },
