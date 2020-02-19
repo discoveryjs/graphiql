@@ -1,11 +1,13 @@
 {
-  "name": "docker-graphiql",
+  "name": "graphiql-with-explorer",
   "version": "1.0.0",
   "license": "MIT",
   "description": "A GraphiQL docker app",
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack-dev-server",
-    "start:prod": "webpack && node server.js"
+    "build": "webpack",
+    "start:prod": "npm run build && node server.js",
+    "prepublish": "npm run build"
   },
   "dependencies": {
     "ejs": "^3.0.1",
