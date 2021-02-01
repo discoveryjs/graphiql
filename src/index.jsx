@@ -161,4 +161,4 @@ class App extends Component {
   }
 }
 
-render(<App />, document.getElementById('root'));
+render(<App />, window.__params.ROOT_ELEM || document.getElementById('root'));
