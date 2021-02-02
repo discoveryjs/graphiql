@@ -5,11 +5,10 @@ import GraphiQLExplorer from 'graphiql-explorer';
 import { buildClientSchema, getIntrospectionQuery, parse } from 'graphql';
 import { makeDefaultArg, getDefaultScalarArgValue } from './custom-args';
 import 'graphiql/graphiql.css';
-import './index.css';
 
-function fetcher(params) {
+const getFetcher = endpoint => params => {
   return fetch(
-    window.__params.GRAPHQL_ENDPOINT,
+    endpoint,
     {
       method: "POST",
       headers: {
@@ -35,10 +34,15 @@ const DEFAULT_QUERY = `query {
 }`;
 
 class App extends Component {
+  constructor({ endpoint }) {
+    super({ endpoint });
+    this.endpoint = endpoint;
+  }
+
   state = { schema: null, query: DEFAULT_QUERY, explorerIsOpen: true };
 
   componentDidMount() {
-    fetcher({
+    getFetcher(this.endpoint)({
       query: getIntrospectionQuery()
     }).then(result => {
       const editor = this._graphiql.getQueryEditor();
@@ -133,7 +137,7 @@ class App extends Component {
         />
         <GraphiQL
           ref={ref => (this._graphiql = ref)}
-          fetcher={fetcher}
+          fetcher={getFetcher(this.endpoint)}
           schema={schema}
           query={query}
           onEditQuery={this._handleEditQuery}
@@ -161,4 +165,6 @@ class App extends Component {
   }
 }
 
-render(<App />, window.__params.ROOT_ELEM || document.getElementById('root'));
+export function graphiqlApp(endpoint, elem) {
+  render(<App endpoint={endpoint} />, elem || document.getElementById('root'));
+}

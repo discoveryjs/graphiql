@@ -6,12 +6,8 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    <title><%= TITLE %></title>
-    <script>
-      window.__params = {
-        GRAPHQL_ENDPOINT: '<%= GRAPHQL_ENDPOINT %>'
-      }
-    </script>
+    <link rel="stylesheet" href="/index.css">
+    <title>GraphiQL</title>
   </head>
 
   <body>
@@ -26,5 +22,18 @@
       }
     </style>
     <div id="root"></div>
+    <script>
+      const TITLE = '%TITLE%';
+
+      if (TITLE) {
+        document.title = TITLE;
+      }
+      (async () => {
+        const GRAPHQL_ENDPOINT = '%GRAPHQL_ENDPOINT%';
+        const { graphiqlApp } = await import('/index.js');
+
+        graphiqlApp(GRAPHQL_ENDPOINT)
+      })();
+    </script>
   </body>
 </html>
