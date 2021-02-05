@@ -1,5 +1,9 @@
 # Change Log
 
+# 2.1.0
+
+Added CommonJS build
+
 # 2.0.0
 
 Build system reworked, bundle as an esm-module

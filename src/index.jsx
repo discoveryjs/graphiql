@@ -4,7 +4,6 @@ import GraphiQL from 'graphiql';
 import GraphiQLExplorer from 'graphiql-explorer';
 import { buildClientSchema, getIntrospectionQuery, parse } from 'graphql';
 import { makeDefaultArg, getDefaultScalarArgValue } from './custom-args';
-import 'graphiql/graphiql.css';
 
 const getFetcher = endpoint => params => {
   return fetch(
@@ -50,6 +49,7 @@ class App extends Component {
         ...(editor.options.extraKeys || {}),
         "Shift-Alt-LeftClick": this._handleInspectOperation
       });
+      editor.refresh();
 
       this.setState({ schema: buildClientSchema(result.data) });
     });

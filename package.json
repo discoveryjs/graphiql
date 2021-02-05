@@ -1,25 +1,29 @@
 {
   "name": "graphiql-with-explorer",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "license": "MIT",
   "description": "A GraphiQL docker app",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.js",
   "scripts": {
-    "build": "esbuild src/index.jsx --bundle --outfile=dist/index.js --format=esm --define:process.env.NODE_ENV=\\\"production\\\" --define:process.env.NODE_DEBUG=false --define:global=window --log-level=silent",
+    "build:esm": "esbuild src/index.jsx --bundle --outfile=dist/index.js --format=esm --define:process.env.NODE_ENV=\\\"production\\\" --define:process.env.NODE_DEBUG=false --define:global=window --main-fields=module,browser,main",
+    "build:cjs": "esbuild src/index.jsx --bundle --outfile=dist/index.cjs.js --format=cjs --define:process.env.NODE_ENV=\\\"production\\\" --define:process.env.NODE_DEBUG=false --define:global=window --main-fields=module,browser,main",
+    "build:css": "node build.css.js",
+    "build": "npm run build:esm && npm run build:cjs && npm run build:css",
     "start": "npm run build && node server.js",
     "prepublish": "npm run build"
   },
-  "dependencies": {
+  "devDependencies": {
     "assert": "^2.0.0",
+    "css-tree": "^1.1.2",
     "ejs": "^3.0.1",
-    "graphiql": "^0.17.5",
-    "graphiql-explorer": "^0.5.1",
+    "esbuild": "^0.8.42",
+    "express": "^4.17.1",
+    "graphiql": "1.4.0-rc.1",
+    "graphiql-explorer": "^0.6.2",
     "graphql": "14.5.8",
     "punycode": "^2.1.1",
     "react": "16.12.0",
     "react-dom": "^17.0.1"
-  },
-  "devDependencies": {
-    "esbuild": "^0.8.39",
-    "express": "^4.17.1"
   }
 }
