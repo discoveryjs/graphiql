@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-import GraphiQL from 'graphiql';
+import { GraphiQL } from './graphiql';
 import GraphiQLExplorer from 'graphiql-explorer';
 import { buildClientSchema, getIntrospectionQuery, parse } from 'graphql';
 import { makeDefaultArg, getDefaultScalarArgValue } from './custom-args';
+import { Widget } from '@discoveryjs/discovery';
 
 const getFetcher = endpoint => params => {
   return fetch(
@@ -29,8 +30,7 @@ const getFetcher = endpoint => params => {
     });
 }
 
-const DEFAULT_QUERY = `query {
-}`;
+const DEFAULT_QUERY = ``;
 
 class App extends Component {
   constructor({ endpoint }) {
