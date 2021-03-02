@@ -12,18 +12,18 @@ type DiscoveryProps = {
 
 export class Discovery extends React.Component<DiscoveryProps> {
     discovery: any;
+    ref: any;
 
     constructor(props: DiscoveryProps) {
         super(props);
 
         this.discovery = null;
+        this.ref = React.createRef();
     }
 
     componentDidMount() {
-        const rootNode = document.querySelector('.discovery-root');
-
         this.discovery = new Widget(
-            rootNode, null, {
+            this.ref.current, null, {
                 styles: [{ type: 'link', href: 'discovery.css' }]
             }
         );
@@ -99,6 +99,6 @@ export class Discovery extends React.Component<DiscoveryProps> {
     }
 
     render() {
-        return <div className={`discovery-root ${this.props.value ? '' : ' hidden'}`}></div>
+        return <div ref={this.ref} className={`discovery-root ${this.props.value ? '' : ' hidden'}`}></div>
     }
 }
