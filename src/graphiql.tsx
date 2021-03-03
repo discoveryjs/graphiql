@@ -116,6 +116,8 @@ import React, {
     readOnly?: boolean;
     docExplorerOpen?: boolean;
     toolbar?: GraphiQLToolbarConfig;
+    discoveryStyles: string;
+    darkmode: any;
   };
   
   export type GraphiQLState = {
@@ -467,6 +469,8 @@ import React, {
           ? this.state.secondaryEditorHeight
           : undefined,
       };
+
+      const { discoveryStyles, darkmode } = this.props;
   
       return (
         <div
@@ -619,10 +623,12 @@ import React, {
                   </div>
                 )}
                 <Discovery
-                value={this.state.response}
-                query={this.state.query}
-                variables={this.state.variables}
-                initQuery={this.handleInitQuery.bind(this)}
+                  value={this.state.response}
+                  query={this.state.query}
+                  variables={this.state.variables}
+                  initQuery={this.handleInitQuery.bind(this)}
+                  styles={discoveryStyles}
+                  darkmode={darkmode}
                 />
                 {footer}
               </div>

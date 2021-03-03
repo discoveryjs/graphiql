@@ -8,6 +8,8 @@ type DiscoveryProps = {
     query: string
     variables: string
     initQuery: (query: string, variables: string) => void
+    styles: string
+    darkmode: any
 }
 
 export class Discovery extends React.Component<DiscoveryProps> {
@@ -22,11 +24,20 @@ export class Discovery extends React.Component<DiscoveryProps> {
     }
 
     componentDidMount() {
+        const { query, variables, initQuery, styles, darkmode } = this.props;
+
         this.discovery = new Widget(
             this.ref.current, null, {
-                styles: [{ type: 'link', href: 'discovery.css' }]
+                darkmode: darkmode ? darkmode.value : false,
+                styles: [{ type: 'link', href: styles }]
             }
         );
+
+        if (darkmode) {
+            darkmode.subscribe(value => {
+                this.discovery.darkmode.set(value);
+            })
+        }
 
         this.discovery.apply(router);
 
@@ -45,8 +56,8 @@ export class Discovery extends React.Component<DiscoveryProps> {
             content: 'text:"Index"',
             onClick: () => {
                 this.discovery.setPage('default', null, {
-                    'gql-b64': this.props.query || '',
-                    'vars-b64': this.props.variables || ''
+                    'gql-b64': query || '',
+                    'vars-b64': variables || ''
                 })
             }
         });
@@ -55,15 +66,21 @@ export class Discovery extends React.Component<DiscoveryProps> {
             when: () => this.discovery.pageId !== 'report',
             content: 'text:"Make report"',
             onClick: () => this.discovery.setPage('report', null, {
-                'gql-b64': this.props.query || '',
-                'vars-b64': this.props.variables || ''
+                'gql-b64': query || '',
+                'vars-b64': variables || ''
             })
+        });
+
+        this.ref.current.style.display = 'none';
+
+        this.discovery.dom.ready.then(() => {
+            this.ref.current.style.display = '';
         });
 
         const { pageParams } = this.discovery;
 
         if (pageParams['gql-b64'] || pageParams['vars-b64']) {
-            this.props.initQuery(pageParams['gql-b64'] || '', pageParams['vars-b64'] || '');
+            initQuery(pageParams['gql-b64'] || '', pageParams['vars-b64'] || '');
         }
     }
 
