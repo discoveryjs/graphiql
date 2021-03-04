@@ -1,6 +1,6 @@
 {
   "name": "graphiql-with-explorer",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "license": "MIT",
   "description": "A GraphiQL docker app",
   "main": "dist/index.cjs.js",
@@ -14,7 +14,7 @@
     "prepublish": "npm run build"
   },
   "devDependencies": {
-    "@discoveryjs/discovery": "^1.0.0-beta.56",
+    "@discoveryjs/discovery": "^1.0.0-beta.57",
     "@types/react": "^17.0.2",
     "assert": "^2.0.0",
     "css-tree": "^1.1.2",
