@@ -24,10 +24,11 @@ export class Discovery extends React.Component<DiscoveryProps> {
     }
 
     componentDidMount() {
-        const { query, variables, initQuery, styles, darkmode } = this.props;
+        const { initQuery, styles, darkmode } = this.props;
 
         this.discovery = new Widget(
-            this.ref.current, null, {
+            this.ref.current, 'main', {
+                defaultPageId: 'main',
                 darkmode: darkmode ? darkmode.value : false,
                 styles: [{ type: 'link', href: styles }]
             }
@@ -41,7 +42,7 @@ export class Discovery extends React.Component<DiscoveryProps> {
 
         this.discovery.apply(router);
 
-        this.discovery.page.define('default', [
+        this.discovery.page.define('main', [
             {
                 view: 'struct',
                 expanded: 3
@@ -52,22 +53,20 @@ export class Discovery extends React.Component<DiscoveryProps> {
         });
 
         this.discovery.nav.append({
-            when: () => this.discovery.pageId !== 'default',
+            when: () => this.discovery.pageId !== this.discovery.defaultPageId,
             content: 'text:"Index"',
-            onClick: () => {
-                this.discovery.setPage('default', null, {
-                    'gql-b64': query || '',
-                    'vars-b64': variables || ''
-                })
-            }
+            onClick: () => this.discovery.setPage(this.discovery.defaultPageId, null, {
+                'gql-b64': this.props.query || '',
+                'vars-b64': this.props.variables || ''
+            })
         });
 
         this.discovery.nav.append({
             when: () => this.discovery.pageId !== 'report',
             content: 'text:"Make report"',
             onClick: () => this.discovery.setPage('report', null, {
-                'gql-b64': query || '',
-                'vars-b64': variables || ''
+                'gql-b64': this.props.query || '',
+                'vars-b64': this.props.variables || ''
             })
         });
 
