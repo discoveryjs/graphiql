@@ -7,10 +7,6 @@
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
     <link rel="stylesheet" href="/index.css">
-    <title>GraphiQL</title>
-  </head>
-
-  <body>
     <style>
       body {
         padding: 0;
@@ -20,6 +16,28 @@
       #root {
         height: 100vh;
       }
+      .graphiql-container .editorBar {
+        height: 1vh;
+      }
+      .graphiql-container .resultWrap {
+        overflow: auto;
+      }
+      .discovery-root {
+        display: flex;
+        flex: 1 0 50%;
+        overflow: auto;
+      }
+      .discovery-root .discovery {
+        width: 100%;
+      }
+      .discovery-root.hidden {
+        display: none;
+      }
+    </style>
+    <title>GraphiQL</title>
+  </head>
+  <body>
+    <style>
     </style>
     <div id="root"></div>
     <script>

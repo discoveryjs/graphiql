@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-import GraphiQL from 'graphiql';
+import { GraphiQL } from './graphiql';
 import GraphiQLExplorer from 'graphiql-explorer';
 import { buildClientSchema, getIntrospectionQuery, parse } from 'graphql';
 import { makeDefaultArg, getDefaultScalarArgValue } from './custom-args';
+import { Widget } from '@discoveryjs/discovery';
 
 const getFetcher = endpoint => params => {
   return fetch(
@@ -29,8 +30,7 @@ const getFetcher = endpoint => params => {
     });
 }
 
-const DEFAULT_QUERY = `query {
-}`;
+const DEFAULT_QUERY = ``;
 
 class App extends Component {
   constructor({ endpoint }) {
@@ -121,6 +121,7 @@ class App extends Component {
 
   render() {
     const { query, schema } = this.state;
+    const { discoveryStyles, darkmode } = this.props;
     return (
       <div className="graphiql-container">
         <GraphiQLExplorer
@@ -141,6 +142,8 @@ class App extends Component {
           schema={schema}
           query={query}
           onEditQuery={this._handleEditQuery}
+          discoveryStyles={discoveryStyles}
+          darkmode={darkmode}
         >
           <GraphiQL.Toolbar>
             <GraphiQL.Button
@@ -165,6 +168,8 @@ class App extends Component {
   }
 }
 
-export function graphiqlApp(endpoint, elem) {
-  render(<App endpoint={endpoint} />, elem || document.getElementById('root'));
+export function graphiqlApp(endpoint, elem, options = {}) {
+  const { discoveryStyles, darkmode } = options;
+
+  render(<App endpoint={endpoint} discoveryStyles={discoveryStyles || 'discovery.css'} darkmode={darkmode} />, elem || document.getElementById('root'));
 }
