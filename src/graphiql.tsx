@@ -116,8 +116,8 @@ import React, {
     readOnly?: boolean;
     docExplorerOpen?: boolean;
     toolbar?: GraphiQLToolbarConfig;
-    discoveryStyles: string;
-    darkmode: any;
+    discovery: any;
+    onQueryChange: any;
   };
   
   export type GraphiQLState = {
@@ -470,8 +470,6 @@ import React, {
           : undefined,
       };
 
-      const { discoveryStyles, darkmode } = this.props;
-  
       return (
         <div
           ref={n => {
@@ -623,12 +621,7 @@ import React, {
                   </div>
                 )}
                 <Discovery
-                  value={this.state.response}
-                  query={this.state.query}
-                  variables={this.state.variables}
-                  initQuery={this.handleInitQuery.bind(this)}
-                  styles={discoveryStyles}
-                  darkmode={darkmode}
+                  discovery={this.props.discovery}
                 />
                 {footer}
               </div>
@@ -678,13 +671,6 @@ import React, {
     static Menu = ToolbarMenu;
     static MenuItem = ToolbarMenuItem;
 
-    public handleInitQuery(query, variables) {
-        this.setState({
-            query,
-            variables
-        }, () => this.handleRunQuery());
-    }
-  
     // Add a select-option input to the Toolbar.
     // static Select = ToolbarSelect;
     // static SelectOption = ToolbarSelectOption;

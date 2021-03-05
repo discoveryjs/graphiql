@@ -1,6 +1,6 @@
 {
   "name": "graphiql-with-explorer",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "license": "MIT",
   "description": "A GraphiQL docker app",
   "main": "dist/index.cjs.js",

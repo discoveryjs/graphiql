@@ -4,7 +4,9 @@ import { GraphiQL } from './graphiql';
 import GraphiQLExplorer from 'graphiql-explorer';
 import { buildClientSchema, getIntrospectionQuery, parse } from 'graphql';
 import { makeDefaultArg, getDefaultScalarArgValue } from './custom-args';
-import { Widget } from '@discoveryjs/discovery';
+import { App as DiscoveryApp, Widget, router } from '@discoveryjs/discovery/dist/discovery';
+import { encodeParams, decodeParams } from '@discoveryjs/discovery/src/pages/report/params';
+import { dedentBlockStringValue } from 'graphql/language/blockString';
 
 const getFetcher = endpoint => params => {
   return fetch(
@@ -30,15 +32,93 @@ const getFetcher = endpoint => params => {
     });
 }
 
-const DEFAULT_QUERY = ``;
-
 class App extends Component {
-  constructor({ endpoint }) {
-    super({ endpoint });
-    this.endpoint = endpoint;
-  }
+  constructor(props) {
+    super(props);
+    const { endpoint, discovery, discoveryStyles, darkmode } = props;
 
-  state = { schema: null, query: DEFAULT_QUERY, explorerIsOpen: true };
+    this.endpoint = endpoint;
+
+    if (!discovery) {
+      this.discovery = new Widget(
+        null, 'main', {
+          defaultPageId: 'main',
+          darkmode: darkmode ? darkmode.value : false,
+          styles: [{ type: 'link', href: discoveryStyles }]
+        }
+      );
+
+      this.discovery.dom.container.append(
+        this.discovery.dom.loadingOverlay = document.createElement('div')
+      );
+      this.discovery.dom.loadingOverlay.className = 'loading-overlay done';
+
+      this.discovery.progressbar = DiscoveryApp.prototype.progressbar;
+      this.discovery.loadDataFromUrl = DiscoveryApp.prototype.loadDataFromUrl;
+      this.discovery.trackLoadDataProgress = DiscoveryApp.prototype.trackLoadDataProgress;
+
+      if (darkmode) {
+        darkmode.subscribe(value => {
+          this.discovery.darkmode.set(value);
+        })
+      }
+
+      this.discovery.apply(router);
+
+      this.discovery.page.define('main', [
+        {
+          view: 'alert',
+          when: 'no $',
+          content: 'text:"Enter query"'
+        },
+        {
+          view: 'struct',
+          when: '$',
+          expanded: 3
+        }
+      ], {
+        encodeParams,
+        decodeParams
+      });
+
+      this.discovery.nav.append({
+        when: () => this.discovery.pageId !== this.discovery.defaultPageId,
+        content: 'text:"Index"',
+        onClick: () => this.discovery.setPage(this.discovery.defaultPageId, null, {
+          'gql-b64': this.state.query || '',
+          'vars-b64': this.state.variables || ''
+        })
+      });
+
+      this.discovery.nav.append({
+        when: () => this.discovery.pageId !== 'report',
+        content: 'text:"Make report"',
+        onClick: () => this.discovery.setPage('report', null, {
+          'gql-b64': this.state.query || '',
+          'vars-b64': this.state.variables || ''
+        })
+      });
+    }
+
+    this.state = {
+      schema: null,
+      query: this.discovery.pageParams['gql-b64'] || '',
+      variables: this.discovery.pageParams['vars-b64'] || '',
+      explorerIsOpen: true
+    };
+
+    if (this.state.query) {
+      this.getDataFetcher(endpoint)({
+        query: this.state.query,
+        variables: this.state.variables || null
+      });
+      if (this.discovery.pageParams.dzen) {
+        this.discovery.dom.container.dataset.dzen = true;
+      }
+    } else {
+      this.discovery.renderPage()
+    }
+  }
 
   componentDidMount() {
     getFetcher(this.endpoint)({
@@ -113,14 +193,52 @@ class App extends Component {
     el && el.scrollIntoView();
   };
 
-  _handleEditQuery = (query) => this.setState({ query });
+  _handleEditQuery = (query) => {
+    this.setState({ query }, () => {
+      this.discovery.setPageParams({
+        ...this.discovery.pageParams,
+        'gql-b64': this.state.query || '',
+      })
+    });
+  }
+
+  _handleEditVariables = (variables) => {
+    this.setState({ variables }, () => {
+      this.discovery.setPageParams({
+        ...this.discovery.pageParams,
+        'vars-b64': this.state.variables || ''
+      })
+    });
+  }
 
   _handleToggleExplorer = () => {
     this.setState({ explorerIsOpen: !this.state.explorerIsOpen });
   };
 
+  getDataFetcher = (endpoint) => (params) => {
+    return this.discovery.loadDataFromUrl(
+      endpoint,
+      'data',
+      {
+        fetch: {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(params)
+        },
+        validateData: res => {
+          if (res.errors) {
+            throw new Error(JSON.stringify(res.errors));
+          }
+        }
+      }
+    )
+  }
+
   render() {
-    const { query, schema } = this.state;
+    const { query, variables, schema } = this.state;
     const { discoveryStyles, darkmode } = this.props;
     return (
       <div className="graphiql-container">
@@ -138,12 +256,13 @@ class App extends Component {
         />
         <GraphiQL
           ref={ref => (this._graphiql = ref)}
-          fetcher={getFetcher(this.endpoint)}
+          fetcher={this.getDataFetcher(this.endpoint)}
           schema={schema}
           query={query}
+          variables={variables}
           onEditQuery={this._handleEditQuery}
-          discoveryStyles={discoveryStyles}
-          darkmode={darkmode}
+          onEditVariables={this._handleEditVariables}
+          discovery={this.discovery}
         >
           <GraphiQL.Toolbar>
             <GraphiQL.Button
@@ -169,7 +288,7 @@ class App extends Component {
 }
 
 export function graphiqlApp(endpoint, elem, options = {}) {
-  const { discoveryStyles, darkmode } = options;
+  const { discovery, discoveryStyles, darkmode } = options;
 
-  render(<App endpoint={endpoint} discoveryStyles={discoveryStyles || 'discovery.css'} darkmode={darkmode} />, elem || document.getElementById('root'));
+  render(<App endpoint={endpoint} discovery={discovery} discoveryStyles={discoveryStyles || 'discovery.css'} darkmode={darkmode} />, elem || document.getElementById('root'));
 }
