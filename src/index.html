@@ -34,24 +34,17 @@
         display: none;
       }
     </style>
-    <title>GraphiQL</title>
+    <title>%TITLE%</title>
   </head>
   <body>
     <style>
     </style>
     <div id="root"></div>
-    <script>
-      const TITLE = '%TITLE%';
+    <script type="module">
+      const { graphiqlApp } = import('/index.js');
+      const GRAPHQL_ENDPOINT = '%GRAPHQL_ENDPOINT%';
 
-      if (TITLE) {
-        document.title = TITLE;
-      }
-      (async () => {
-        const GRAPHQL_ENDPOINT = '%GRAPHQL_ENDPOINT%';
-        const { graphiqlApp } = await import('/index.js');
-
-        graphiqlApp(GRAPHQL_ENDPOINT)
-      })();
+      graphiqlApp(GRAPHQL_ENDPOINT)
     </script>
   </body>
 </html>
