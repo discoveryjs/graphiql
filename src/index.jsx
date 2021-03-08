@@ -198,7 +198,7 @@ class App extends Component {
       this.discovery.setPageParams({
         ...this.discovery.pageParams,
         'gql-b64': this.state.query || '',
-      })
+      }, true)
     });
   }
 
@@ -207,7 +207,7 @@ class App extends Component {
       this.discovery.setPageParams({
         ...this.discovery.pageParams,
         'vars-b64': this.state.variables || ''
-      })
+      }, true)
     });
   }
 
