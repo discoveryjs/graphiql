@@ -1,5 +1,11 @@
 ## GraphiQL with Discovery.js as result viewer
 
+### Start server
+
+```
+GRAPHQL_ENDPOINT=https://your.endpoint/graphql npm start
+```
+
 ### Docker
 
 Pull image and run it with `TITLE` and `GRAPHQL_ENDPOINT` env variables

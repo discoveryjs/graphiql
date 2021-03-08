@@ -1,14 +1,11 @@
-@import '@discoveryjs/discovery/dist/discovery.css';
-
-.discovery[data-dzen] {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 999;
+.discovery-root {
+    display: flex;
+    flex: 1 0 50%;
+    overflow: auto;
 }
-
-.discovery {
+.discovery-root .discovery {
     width: 100%;
+}
+.discovery-root.hidden {
+    display: none;
 }

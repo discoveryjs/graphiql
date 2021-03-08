@@ -1,1 +1,5 @@
 src
+dev
+scripts
+Dockerfile
+.dockerignore

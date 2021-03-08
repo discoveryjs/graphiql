@@ -21,7 +21,6 @@ import React, {
   import { getFragmentDependenciesForAST } from 'graphql-language-service-utils';
   
   import { ExecuteButton } from 'graphiql/dist/components/ExecuteButton';
-  import { ImagePreview } from 'graphiql/dist/components/ImagePreview';
   import { ToolbarButton } from 'graphiql/dist/components/ToolbarButton';
   import { ToolbarGroup } from 'graphiql/dist/components/ToolbarGroup';
   import { ToolbarMenu, ToolbarMenuItem } from 'graphiql/dist/components/ToolbarMenu';

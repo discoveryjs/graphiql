@@ -16,35 +16,22 @@
       #root {
         height: 100vh;
       }
-      .graphiql-container .editorBar {
-        height: 1vh;
-      }
-      .graphiql-container .resultWrap {
-        overflow: auto;
-      }
-      .discovery-root {
-        display: flex;
-        flex: 1 0 50%;
-        overflow: auto;
-      }
-      .discovery-root .discovery {
-        width: 100%;
-      }
-      .discovery-root.hidden {
-        display: none;
-      }
     </style>
     <title>%TITLE%</title>
   </head>
   <body>
-    <style>
-    </style>
     <div id="root"></div>
     <script type="module">
-      const { graphiqlApp } = import('/index.js');
-      const GRAPHQL_ENDPOINT = '%GRAPHQL_ENDPOINT%';
+      import { createDiscoveryInstance } from './create-discovery-instance.js';
+      import { graphiqlApp } from './index.js';
 
-      graphiqlApp(GRAPHQL_ENDPOINT)
+      const ENDPOINT = '%GRAPHQL_ENDPOINT%';
+
+      if (ENDPOINT) {
+        graphiqlApp(ENDPOINT, createDiscoveryInstance())
+      } else {
+        document.body.innerHTML = 'Error: GRAPHQL_ENDPOINT is not set!';
+      }
     </script>
   </body>
 </html>

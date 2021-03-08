@@ -6,11 +6,12 @@
   "main": "dist/index.cjs.js",
   "module": "dist/index.js",
   "scripts": {
-    "build:esm": "esbuild src/index.jsx --bundle --outfile=dist/index.js --format=esm --define:process.env.NODE_ENV=\\\"production\\\" --define:process.env.NODE_DEBUG=false --define:global=window --main-fields=module,browser,main",
-    "build:cjs": "esbuild src/index.jsx --bundle --outfile=dist/index.cjs.js --format=cjs --define:process.env.NODE_ENV=\\\"production\\\" --define:process.env.NODE_DEBUG=false --define:global=window --main-fields=module,browser,main",
-    "build:css": "node build.css.js && esbuild src/discovery.css --bundle --outfile=dist/discovery.css",
-    "build": "npm run build:esm && npm run build:cjs && npm run build:css",
-    "start": "npm run build && node server.js",
+    "build:bundle": "esbuild --bundle --minify --outdir=dist --define:process.env.NODE_ENV=\\\"production\\\" --define:process.env.NODE_DEBUG=false --define:global=window --main-fields=module,browser,main",
+    "build:js":  "npm run build:bundle -- src/index.jsx src/create-discovery-instance.js --format=esm",
+    "build:css": "npm run build:bundle -- src/index.css src/create-discovery-instance.css --log-level=error && node scripts/cleanup-css-hacks",
+    "build": "npm run build:js && npm run build:css",
+    "start": "npm run build && node scripts/server.js",
+    "dev": "mkdir -p dev && node scripts/gen-html > dev/index.html && npm run build:bundle -- src/index.jsx src/create-discovery-instance.js src/index.css src/create-discovery-instance.css --outdir=dev --servedir=dev --format=esm",
     "prepublish": "npm run build"
   },
   "devDependencies": {
@@ -20,7 +21,7 @@
     "css-tree": "^1.1.2",
     "dset": "^3.1.0",
     "ejs": "^3.0.1",
-    "esbuild": "^0.8.42",
+    "esbuild": "^0.8.57",
     "express": "^4.17.1",
     "graphiql": "1.4.0-rc.1",
     "graphiql-explorer": "^0.6.2",

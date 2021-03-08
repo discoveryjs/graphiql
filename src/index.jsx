@@ -4,9 +4,6 @@ import { GraphiQL } from './graphiql';
 import GraphiQLExplorer from 'graphiql-explorer';
 import { buildClientSchema, getIntrospectionQuery, parse } from 'graphql';
 import { makeDefaultArg, getDefaultScalarArgValue } from './custom-args';
-import { App as DiscoveryApp, Widget, router } from '@discoveryjs/discovery/dist/discovery';
-import { encodeParams, decodeParams } from '@discoveryjs/discovery/src/pages/report/params';
-import { dedentBlockStringValue } from 'graphql/language/blockString';
 
 const getFetcher = endpoint => params => {
   return fetch(
@@ -35,70 +32,10 @@ const getFetcher = endpoint => params => {
 class App extends Component {
   constructor(props) {
     super(props);
-    const { endpoint, discovery, discoveryStyles, darkmode } = props;
 
+    const { endpoint, discovery } = props;
     this.endpoint = endpoint;
-
-    if (!discovery) {
-      this.discovery = new Widget(
-        null, 'main', {
-          defaultPageId: 'main',
-          darkmode: darkmode ? darkmode.value : false,
-          styles: [{ type: 'link', href: discoveryStyles }]
-        }
-      );
-
-      this.discovery.dom.container.append(
-        this.discovery.dom.loadingOverlay = document.createElement('div')
-      );
-      this.discovery.dom.loadingOverlay.className = 'loading-overlay done';
-
-      this.discovery.progressbar = DiscoveryApp.prototype.progressbar;
-      this.discovery.loadDataFromUrl = DiscoveryApp.prototype.loadDataFromUrl;
-      this.discovery.trackLoadDataProgress = DiscoveryApp.prototype.trackLoadDataProgress;
-
-      if (darkmode) {
-        darkmode.subscribe(value => {
-          this.discovery.darkmode.set(value);
-        })
-      }
-
-      this.discovery.apply(router);
-
-      this.discovery.page.define('main', [
-        {
-          view: 'alert',
-          when: 'no $',
-          content: 'text:"Enter query"'
-        },
-        {
-          view: 'struct',
-          when: '$',
-          expanded: 3
-        }
-      ], {
-        encodeParams,
-        decodeParams
-      });
-
-      this.discovery.nav.append({
-        when: () => this.discovery.pageId !== this.discovery.defaultPageId,
-        content: 'text:"Index"',
-        onClick: () => this.discovery.setPage(this.discovery.defaultPageId, null, {
-          'gql-b64': this.state.query || '',
-          'vars-b64': this.state.variables || ''
-        })
-      });
-
-      this.discovery.nav.append({
-        when: () => this.discovery.pageId !== 'report',
-        content: 'text:"Make report"',
-        onClick: () => this.discovery.setPage('report', null, {
-          'gql-b64': this.state.query || '',
-          'vars-b64': this.state.variables || ''
-        })
-      });
-    }
+    this.discovery = discovery;
 
     this.state = {
       schema: null,
@@ -112,6 +49,7 @@ class App extends Component {
         query: this.state.query,
         variables: this.state.variables || null
       });
+
       if (this.discovery.pageParams.dzen) {
         this.discovery.dom.container.dataset.dzen = true;
       }
@@ -239,7 +177,7 @@ class App extends Component {
 
   render() {
     const { query, variables, schema } = this.state;
-    const { discoveryStyles, darkmode } = this.props;
+
     return (
       <div className="graphiql-container">
         <GraphiQLExplorer
@@ -287,8 +225,9 @@ class App extends Component {
   }
 }
 
-export function graphiqlApp(endpoint, elem, options = {}) {
-  const { discovery, discoveryStyles, darkmode } = options;
-
-  render(<App endpoint={endpoint} discovery={discovery} discoveryStyles={discoveryStyles || 'discovery.css'} darkmode={darkmode} />, elem || document.getElementById('root'));
+export function graphiqlApp(endpoint, discovery, elem) {
+  render(
+    <App endpoint={endpoint} discovery={discovery} />,
+    elem || document.getElementById('root')
+  );
 }
