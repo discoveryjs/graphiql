@@ -41,6 +41,7 @@ class App extends Component {
       schema: null,
       query: this.discovery.pageParams['gql-b64'] || '',
       variables: this.discovery.pageParams['vars-b64'] || '',
+      dzen: this.discovery.pageParams['dzen'] || false,
       explorerIsOpen: true
     };
 
@@ -54,8 +55,12 @@ class App extends Component {
         this.discovery.dom.container.dataset.dzen = true;
       }
     } else {
-      this.discovery.renderPage()
+      this.discovery.renderPage();
     }
+
+    this.discovery.on('pageHashChange', () => {
+      this.setState({ dzen: this.discovery.pageParams.dzen || false })
+    });
   }
 
   componentDidMount() {
@@ -176,10 +181,10 @@ class App extends Component {
   }
 
   render() {
-    const { query, variables, schema } = this.state;
+    const { query, variables, schema, dzen } = this.state;
 
     return (
-      <div className="graphiql-container">
+      <div className={`graphiql-container ${dzen ? 'dzen' : ''}`}>
         <GraphiQLExplorer
           schema={schema}
           query={query}

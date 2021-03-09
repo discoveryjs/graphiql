@@ -6,7 +6,7 @@ export function createDiscoveryInstance(options) {
     const instance = new Widget(null, 'main', {
         defaultPageId: 'main',
         darkmode: darkmode || false,
-        styles: [{ type: 'link', href: 'create-discovery-instance.css' }]
+        styles: styles || [{ type: 'link', href: 'create-discovery-instance.css' }]
     });
 
     instance.dom.container.append(

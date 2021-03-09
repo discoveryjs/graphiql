@@ -1,6 +1,9 @@
 @import url('graphiql/graphiql.css');
 @import url('./discovery.css');
 
+.graphiql-container.dzen {
+    visibility: hidden;
+}
 .graphiql-container .editorBar {
     height: 1vh;
     color: red;
