@@ -42,19 +42,13 @@ export function createDiscoveryInstance(options) {
     instance.nav.append({
         when: () => instance.pageId !== instance.defaultPageId,
         content: 'text:"Index"',
-        onClick: () => instance.setPage(instance.defaultPageId, null, {
-            'gql-b64': instance.pageParams['gql-b64'] || '',
-            'vars-b64': instance.pageParams['vars-b64'] || '',
-        })
+        onClick: () => instance.setPage(instance.defaultPageId)
     });
 
     instance.nav.append({
         when: () => instance.pageId !== instance.reportPageId,
         content: 'text:"Make report"',
-        onClick: () => instance.setPage(instance.reportPageId, null, {
-            'gql-b64': instance.pageParams['gql-b64'] || '',
-            'vars-b64': instance.pageParams['vars-b64'] || '',
-        })
+        onClick: () => instance.setPage(instance.reportPageId)
     });
 
     return instance;

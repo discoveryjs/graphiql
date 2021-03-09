@@ -4,6 +4,7 @@ import { GraphiQL } from './graphiql';
 import GraphiQLExplorer from 'graphiql-explorer';
 import { buildClientSchema, getIntrospectionQuery, parse } from 'graphql';
 import { makeDefaultArg, getDefaultScalarArgValue } from './custom-args';
+import * as base64 from '@discoveryjs/discovery/src/core/utils/base64';
 
 const getFetcher = endpoint => params => {
   return fetch(
@@ -39,10 +40,23 @@ class App extends Component {
 
     this.state = {
       schema: null,
-      query: this.discovery.pageParams['gql-b64'] || '',
-      variables: this.discovery.pageParams['vars-b64'] || '',
+      query: this.getDiscoveryParam('gql-query'),
+      variables: this.getDiscoveryParam('gql-vars') || '',
       dzen: this.discovery.pageParams['dzen'] || false,
       explorerIsOpen: true
+    };
+
+    discovery.setPageHash = function(hash, replace) {
+      const { pageId, pageRef, pageParams } = this.decodePageHash(hash);
+      return discovery.constructor.prototype.setPageHash.call(
+          this,
+          this.encodePageHash(pageId, pageRef, {
+              ...'gql-query' in this.pageParams ? { 'gql-query': this.pageParams['gql-query'] } : null,
+              ...'gql-vars' in this.pageParams ? { 'gql-vars': this.pageParams['gql-vars'] } : null,
+              ...pageParams
+          }),
+          replace || hash === location.hash
+      );
     };
 
     if (this.state.query) {
@@ -61,6 +75,10 @@ class App extends Component {
     this.discovery.on('pageHashChange', () => {
       this.setState({ dzen: this.discovery.pageParams.dzen || false })
     });
+  }
+
+  getDiscoveryParam(name) {
+    return base64.decode(this.discovery.pageParams[name] || '');
   }
 
   componentDidMount() {
@@ -140,7 +158,7 @@ class App extends Component {
     this.setState({ query }, () => {
       this.discovery.setPageParams({
         ...this.discovery.pageParams,
-        'gql-b64': this.state.query || '',
+        'gql-query': base64.encode(this.state.query || ''),
       }, true)
     });
   }
@@ -149,7 +167,7 @@ class App extends Component {
     this.setState({ variables }, () => {
       this.discovery.setPageParams({
         ...this.discovery.pageParams,
-        'vars-b64': this.state.variables || ''
+        'gql-vars': base64.encode(this.state.variables || '')
       }, true)
     });
   }
