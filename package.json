@@ -7,7 +7,7 @@
   "module": "dist/index.js",
   "scripts": {
     "build:bundle": "esbuild --bundle --minify --outdir=dist --define:process.env.NODE_ENV=\\\"production\\\" --define:process.env.NODE_DEBUG=false --define:global=window --main-fields=module,browser,main",
-    "build:js":  "npm run build:bundle -- src/index.jsx src/create-discovery-instance.js --format=esm",
+    "build:js": "npm run build:bundle -- src/index.jsx src/create-discovery-instance.js --format=esm",
     "build:css": "npm run build:bundle -- src/index.css src/create-discovery-instance.css --log-level=error && node scripts/cleanup-css-hacks",
     "build": "npm run build:js && npm run build:css",
     "start": "npm run build && node scripts/server.js",
