@@ -1,4 +1,4 @@
-## next
+## 1.2.0 (10-03-2021)
 
 - Changed `graphiqlApp` to expose `App` instance (result of top level render)
 
