@@ -1,9 +1,9 @@
 {
   "name": "@discoveryjs/graphiql",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "license": "MIT",
   "description": "A GraphiQL docker app",
-  "main": "dist/index.cjs.js",
+  "main": "dist/index.js",
   "module": "dist/index.js",
   "scripts": {
     "build:bundle": "esbuild --bundle --minify --outdir=dist --define:process.env.NODE_ENV=\\\"production\\\" --define:process.env.NODE_DEBUG=false --define:global=window --main-fields=module,browser,main",

@@ -1,17 +1,10 @@
-# Change Log
+## 1.1.0
 
-# 2.1.0
+- Reworked build scripts
+- Removed CommonJS bundle
+- Splitted into 2 modules: graphiql itself and create discovery instance module
+- Various fixes and improvements on integration graphiql<->discoveryjs
 
-Added CommonJS build
+## 1.0.0
 
-# 2.0.0
-
-Build system reworked, bundle as an esm-module
-
-# 1.0.1
-
-Added option to specify root elem for the app
-
-# 1.0.0
-
-Initial Release
+- Initial Release
