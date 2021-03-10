@@ -91,6 +91,7 @@ class App extends Component {
         "Shift-Alt-LeftClick": this._handleInspectOperation
       });
       editor.refresh();
+      this._graphiql.getVariableEditor().refresh();
 
       this.setState({ schema: buildClientSchema(result.data) });
     });
