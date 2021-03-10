@@ -1,4 +1,8 @@
-## 1.1.0
+## next
+
+- Changed `graphiqlApp` to expose `App` instance (result of top level render)
+
+## 1.1.0 (10-03-2021)
 
 - Reworked build scripts
 - Removed CommonJS bundle

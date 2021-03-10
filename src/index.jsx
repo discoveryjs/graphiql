@@ -90,10 +90,9 @@ class App extends Component {
         ...(editor.options.extraKeys || {}),
         "Shift-Alt-LeftClick": this._handleInspectOperation
       });
-      editor.refresh();
-      this._graphiql.getVariableEditor().refresh();
 
       this.setState({ schema: buildClientSchema(result.data) });
+      this._graphiql.refresh();
     });
   }
 
@@ -250,7 +249,7 @@ class App extends Component {
 }
 
 export function graphiqlApp(endpoint, discovery, elem) {
-  render(
+  return render(
     <App endpoint={endpoint} discovery={discovery} />,
     elem || document.getElementById('root')
   );
