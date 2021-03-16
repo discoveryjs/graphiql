@@ -6,8 +6,245 @@
 }
 .graphiql-container .editorBar {
     height: 1vh;
-    color: red;
 }
 .graphiql-container .resultWrap {
     overflow: auto;
+}
+.graphiql-explorer-root > * > * {
+    outline: none;
+}
+
+/*
+    Dark mode
+*/
+
+.graphiql-container.darkmode select,
+.graphiql-container.darkmode input {
+    background-color: rgba(0, 0, 0, .25);
+    border-color: rgba(17, 17, 17, 0.5) !important;
+    color: #888;
+}
+
+.graphiql-container.darkmode .doc-explorer-contents,
+.graphiql-container.darkmode .history-contents {
+    background-color: #21262B;
+    border-top: 1px solid #181A1F;
+}
+
+.graphiql-container.darkmode .toolbar-button {
+    background: #1c2125 !important;
+    box-shadow: none !important;
+    color: #8f97a5 !important;
+    border: 1px solid #595f6d !important;
+}
+
+.graphiql-container.darkmode .resultWrap {
+    border-left: solid 1px #181a1f;
+}
+
+.graphiql-container.darkmode .variable-editor-title {
+    background: #21262b;
+    border-color: rgba(137, 137, 137, 0.35) !important;
+    color: #cacdd3;
+}
+.graphiql-container.darkmode .variable-editor-title * {
+    color: #cacdd3 !important;
+}
+
+.graphiql-container.darkmode .topBar,
+.graphiql-container.darkmode .doc-explorer-title-bar {
+    background: #21262B;
+    border-color: #181A1F;
+    color: #cacdd3;
+}
+
+.graphiql-container.darkmode .docExplorerHide {
+    color: #606671;
+}
+
+.graphiql-container.darkmode .doc-explorer-title,
+.graphiql-container.darkmode .history-title,
+.graphiql-container.darkmode .doc-explorer-back {
+    color: #CACDD3 !important;
+}
+
+.graphiql-container.darkmode .doc-explorer {
+    background: #21262b;
+}
+
+.graphiql-container.darkmode .graphiql-operation-title-bar {
+    color: #f57966 !important;
+}
+.graphiql-container.darkmode .graphiql-operation-title-bar input {
+    color: #7ecbd0 !important;
+}
+.graphiql-container.darkmode .graphiql-explorer-field-view {
+    color: #64a1dc !important;
+}
+.graphiql-container.darkmode .graphiql-explorer-graphql-arguments [data-arg-name] span {
+    color: #c888e6 !important;
+}
+
+.graphiql-container.darkmode .docExplorerWrap,
+.graphiql-container.darkmode .historyPaneWrap {
+    box-shadow: none;
+}
+
+.graphiql-container.darkmode .docExplorerShow {
+    border-left: none;
+}
+.graphiql-container.darkmode .docExplorerShow,
+.graphiql-container.darkmode .historyShow {
+    background: #21262b;
+    border-bottom: 1px solid #181A1E;
+    color: #CACDD3;
+}
+
+.graphiql-container.darkmode .docExplorerShow:before,
+.graphiql-container.darkmode .doc-explorer-back:before  {
+    border-color: #CACDD3;
+}
+
+.graphiql-container.darkmode .search-box {
+    margin: auto auto 10px auto;
+    border: none;
+}
+.graphiql-container.darkmode .search-box input {
+    background: #1E2127;
+    padding-left: 28px;
+}
+
+.graphiql-container.darkmode .search-box .search-box-clear,
+.graphiql-container.darkmode .search-box .search-box-clear:hover {
+    background: #1d2126;
+}
+
+.graphiql-container.darkmode .search-box:before {
+    color: #c1c4ca;
+    font-size: 21px;
+    left: 8px;
+}
+
+.graphiql-container.darkmode,
+.graphiql-container.darkmode button,
+.graphiql-container.darkmode input {
+    color: #9299A7;
+}
+
+.graphiql-container.darkmode .execute-button {
+    background: #21262b;
+    border: 1px solid rgb(91, 98, 107);
+    box-shadow: none !important;
+    fill: #c9ccd2;
+}
+
+.graphiql-container.darkmode .history-contents p {
+    border: none;
+}
+
+.graphiql-container.darkmode .historyPaneWrap {
+    background: #21262b;
+}
+
+.graphiql-container.darkmode .execute-options > li.selected,
+.graphiql-container.darkmode .toolbar-menu-items > li.hover,
+.graphiql-container.darkmode .toolbar-menu-items > li:active,
+.graphiql-container.darkmode .toolbar-menu-items > li:hover,
+.graphiql-container.darkmode .toolbar-select-options > li.hover,
+.graphiql-container.darkmode .toolbar-select-options > li:active,
+.graphiql-container.darkmode .toolbar-select-options > li:hover,
+.graphiql-container.darkmode .history-contents > p:hover,
+.graphiql-container.darkmode .history-contents > p:active {
+    background: #383C41;
+}
+
+.graphiql-container.darkmode .doc-category-title {
+    border-bottom: 1px solid #181a1f;
+    color: #cacdd3;
+}
+
+.graphiql-container.darkmode .field-name {
+    color: #9CA3AC;
+}
+
+.graphiql-container.darkmode .type-name {
+    color: #95be76;
+}
+
+.graphiql-container.darkmode .keyword {
+    color: #9ea5b0;
+}
+
+.graphiql-container.darkmode .arg-name {
+    color: #b5875d;
+}
+
+.graphiql-container.darkmode .doc-category-item {
+    color: #BC6069;
+}
+
+.graphiql-container.darkmode a {
+    color: #7b9ad4;
+}
+
+.graphiql-container.darkmode .CodeMirror {
+    background: #282D34 !important;
+}
+.graphiql-container.darkmode .CodeMirror-gutters {
+    border: none !important;
+    background-color: #282d33;
+}
+.graphiql-container.darkmode .result-window .CodeMirror-gutters {
+    background: #282D33;
+    border: none !important;
+}
+.graphiql-container.darkmode .CodeMirror-lint-tooltip {
+    background: #1a1e22 !important;
+    color: red;
+}
+
+.graphiql-container.darkmode .CodeMirror-hints {
+    background: #21262a;
+    box-shadow: 0 16px 13px -10px rgba(0, 0, 0, 0.3);
+}
+.graphiql-container.darkmode .CodeMirror-hint {
+    border-top: solid 1px #212629;
+    color: #8ab16f;
+}
+.graphiql-container.darkmode .CodeMirror-hint-information {
+    border-top: solid 1px #181a1e;
+}
+.graphiql-container.darkmode li.CodeMirror-hint-active {
+    background-color: #262c2f;
+    border-top-color: #212629;
+    color: #b8ff87;
+}
+.graphiql-container.darkmode .CodeMirror-hint-information .content {
+    color: #a4abb7;
+}
+.graphiql-container.darkmode .CodeMirror div.CodeMirror-cursor {
+    border-left: 2px solid #97BE7B;
+}
+.graphiql-container.darkmode .cm-property {
+    color: #A5ACB8;
+}
+.graphiql-container.darkmode .cm-string {
+    color: #97BE7B;
+}
+.graphiql-container.darkmode .cm-variable,
+.graphiql-container.darkmode .cm-attribute {
+    color: #c9a98d;
+}
+.graphiql-container.darkmode .cm-def {
+    color: #7ecbd0;
+}
+.graphiql-container.darkmode .cm-keyword {
+    color: #f57966;
+}
+.graphiql-container.darkmode .cm-punctuation,
+.graphiql-container.darkmode .cm-ws {
+    color: #999;
+}
+.graphiql-container.darkmode .cm-atom {
+    color: #d27caf;
 }

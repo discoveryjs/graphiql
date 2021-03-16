@@ -43,10 +43,12 @@ class App extends Component {
       query: this.getDiscoveryParam('gql-query'),
       variables: this.getDiscoveryParam('gql-vars') || '',
       dzen: this.discovery.pageParams['dzen'] || false,
+      darkmode: this.discovery.darkmode.value,
       explorerIsOpen: true
     };
 
-    discovery.setPageHash = function(hash, replace) {
+    this.discovery.darkmode.subscribe(darkmode => this.setState({ darkmode }));
+    this.discovery.setPageHash = function(hash, replace) {
       const { pageId, pageRef, pageParams } = this.decodePageHash(hash);
       return discovery.constructor.prototype.setPageHash.call(
           this,
@@ -58,6 +60,9 @@ class App extends Component {
           replace || hash === location.hash
       );
     };
+    this.discovery.on('pageHashChange', () => {
+      this.setState({ dzen: this.discovery.pageParams.dzen || false })
+    });
 
     if (this.state.query) {
       this.getDataFetcher(endpoint)({
@@ -71,10 +76,6 @@ class App extends Component {
     } else {
       this.discovery.renderPage();
     }
-
-    this.discovery.on('pageHashChange', () => {
-      this.setState({ dzen: this.discovery.pageParams.dzen || false })
-    });
   }
 
   getDiscoveryParam(name) {
@@ -199,10 +200,10 @@ class App extends Component {
   }
 
   render() {
-    const { query, variables, schema, dzen } = this.state;
+    const { query, variables, schema, dzen, darkmode } = this.state;
 
     return (
-      <div className={`graphiql-container ${dzen ? 'dzen' : ''}`}>
+      <div className={`graphiql-container ${dzen ? 'dzen' : ''} ${darkmode ? 'darkmode' : ''}`}>
         <GraphiQLExplorer
           schema={schema}
           query={query}
