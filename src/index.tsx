@@ -6,14 +6,14 @@ import { buildClientSchema, getIntrospectionQuery, parse } from 'graphql';
 import { makeDefaultArg, getDefaultScalarArgValue } from './custom-args';
 import * as base64 from '@discoveryjs/discovery/src/core/utils/base64';
 
-const getFetcher = endpoint => params => {
+const getFetcher = (endpoint: string) => (params: any) => {
     return fetch(
         endpoint,
         {
-            method: "POST",
+            method: 'POST',
             headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json"
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(params)
         }
@@ -28,10 +28,28 @@ const getFetcher = endpoint => params => {
                 return responseBody;
             }
         });
-}
+};
 
-class App extends Component {
-    constructor(props) {
+export type AppProps = {
+    endpoint: string;
+    discovery: any;
+};
+
+export type AppState = {
+    schema: any,
+    query?: string;
+    variables?: string;
+    dzen: boolean;
+    darkmode: boolean;
+    explorerIsOpen: boolean;
+};
+
+class App extends Component<AppProps, AppState> {
+    endpoint: string;
+    discovery: any;
+    _graphiql: any;
+
+    constructor(props: AppProps) {
         super(props);
 
         const { endpoint, discovery } = props;
@@ -42,13 +60,13 @@ class App extends Component {
             schema: null,
             query: this.getDiscoveryParam('gql-query'),
             variables: this.getDiscoveryParam('gql-vars') || '',
-            dzen: this.discovery.pageParams['dzen'] || false,
+            dzen: this.discovery.pageParams.dzen || false,
             darkmode: this.discovery.darkmode.value,
             explorerIsOpen: true
         };
 
-        this.discovery.darkmode.subscribe(darkmode => this.setState({ darkmode }));
-        this.discovery.setPageHash = function (hash, replace) {
+        this.discovery.darkmode.subscribe((darkmode: boolean) => this.setState({ darkmode }));
+        this.discovery.setPageHash = function (hash: string, replace: boolean) {
             const { pageId, pageRef, pageParams } = this.decodePageHash(hash);
             return discovery.constructor.prototype.setPageHash.call(
                 this,
@@ -61,7 +79,7 @@ class App extends Component {
             );
         };
         this.discovery.on('pageHashChange', () => {
-            this.setState({ dzen: this.discovery.pageParams.dzen || false })
+            this.setState({ dzen: this.discovery.pageParams.dzen || false });
         });
 
         if (this.state.query) {
@@ -78,7 +96,7 @@ class App extends Component {
         }
     }
 
-    getDiscoveryParam(name) {
+    getDiscoveryParam(name: string) {
         return base64.decode(this.discovery.pageParams[name] || '');
     }
 
@@ -87,9 +105,9 @@ class App extends Component {
             query: getIntrospectionQuery()
         }).then(result => {
             const editor = this._graphiql.getQueryEditor();
-            editor.setOption("extraKeys", {
+            editor.setOption('extraKeys', {
                 ...(editor.options.extraKeys || {}),
-                "Shift-Alt-LeftClick": this._handleInspectOperation
+                'Shift-Alt-LeftClick': this._handleInspectOperation
             });
 
             this.setState({ schema: buildClientSchema(result.data) });
@@ -98,29 +116,29 @@ class App extends Component {
     }
 
     _handleInspectOperation = (
-        cm,
-        mousePos
+        cm: any,
+        mousePos: any
     ) => {
-        const parsedQuery = parse(this.state.query || "");
+        const parsedQuery = parse(this.state.query || '');
 
         if (!parsedQuery) {
-            console.error("Couldn't parse query document");
+            console.error('Couldn\'t parse query document');
             return null;
         }
 
-        var token = cm.getTokenAt(mousePos);
-        var start = { line: mousePos.line, ch: token.start };
-        var end = { line: mousePos.line, ch: token.end };
-        var relevantMousePos = {
+        const token = cm.getTokenAt(mousePos);
+        const start = { line: mousePos.line, ch: token.start };
+        const end = { line: mousePos.line, ch: token.end };
+        const relevantMousePos = {
             start: cm.indexFromPos(start),
             end: cm.indexFromPos(end)
         };
 
-        var position = relevantMousePos;
+        const position = relevantMousePos;
 
-        var def = parsedQuery.definitions.find(definition => {
+        const def = parsedQuery.definitions.find(definition => {
             if (!definition.loc) {
-                console.log("Missing location information for definition");
+                console.log('Missing location information for definition');
                 return false;
             }
 
@@ -130,46 +148,46 @@ class App extends Component {
 
         if (!def) {
             console.error(
-                "Unable to find definition corresponding to mouse position"
+                'Unable to find definition corresponding to mouse position'
             );
             return null;
         }
 
-        var operationKind =
-            def.kind === "OperationDefinition"
+        const operationKind =
+            def.kind === 'OperationDefinition'
                 ? def.operation
-                : def.kind === "FragmentDefinition"
-                    ? "fragment"
-                    : "unknown";
+                : def.kind === 'FragmentDefinition'
+                    ? 'fragment'
+                    : 'unknown';
 
-        var operationName =
-            def.kind === "OperationDefinition" && !!def.name
-                ? def.name.value
-                : def.kind === "FragmentDefinition" && !!def.name
+        const operationName =
+            def.kind === 'OperationDefinition' && Boolean(def.name)
+                ? def.name && def.name.value
+                : def.kind === 'FragmentDefinition' && Boolean(def.name)
                     ? def.name.value
-                    : "unknown";
+                    : 'unknown';
 
-        var selector = `.graphiql-explorer-root #${operationKind}-${operationName}`;
+        const selector = `.graphiql-explorer-root #${operationKind}-${operationName}`;
 
-        var el = document.querySelector(selector);
+        const el = document.querySelector(selector);
         el && el.scrollIntoView();
     };
 
-    _handleEditQuery = (query) => {
+    _handleEditQuery = (query?: string) => {
         this.setState({ query }, () => {
             this.discovery.setPageParams({
                 ...this.discovery.pageParams,
-                'gql-query': base64.encode(this.state.query || ''),
-            }, true)
+                'gql-query': base64.encode(this.state.query || '')
+            }, true);
         });
     }
 
-    _handleEditVariables = (variables) => {
+    _handleEditVariables = (variables: string) => {
         this.setState({ variables }, () => {
             this.discovery.setPageParams({
                 ...this.discovery.pageParams,
                 'gql-vars': base64.encode(this.state.variables || '')
-            }, true)
+            }, true);
         });
     }
 
@@ -177,26 +195,26 @@ class App extends Component {
         this.setState({ explorerIsOpen: !this.state.explorerIsOpen });
     };
 
-    getDataFetcher = (endpoint) => (params) => {
+    getDataFetcher = (endpoint: string) => (params: any) => {
         return this.discovery.loadDataFromUrl(
             endpoint,
             'data',
             {
                 fetch: {
-                    method: "POST",
+                    method: 'POST',
                     headers: {
-                        Accept: "application/json",
-                        "Content-Type": "application/json"
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(params)
                 },
-                validateData: res => {
+                validateData: (res: any) => {
                     if (res.errors) {
                         throw new Error(JSON.stringify(res.errors));
                     }
                 }
             }
-        )
+        );
     }
 
     render() {
@@ -208,7 +226,7 @@ class App extends Component {
                     schema={schema}
                     query={query}
                     onEdit={this._handleEditQuery}
-                    onRunOperation={operationName =>
+                    onRunOperation={(operationName: string) =>
                         this._graphiql.handleRunQuery(operationName)
                     }
                     explorerIsOpen={this.state.explorerIsOpen}
@@ -217,7 +235,7 @@ class App extends Component {
                     makeDefaultArg={makeDefaultArg}
                 />
                 <GraphiQL
-                    ref={ref => (this._graphiql = ref)}
+                    ref={ref => this._graphiql = ref}
                     fetcher={this.getDataFetcher(this.endpoint)}
                     schema={schema}
                     query={query}
@@ -229,18 +247,18 @@ class App extends Component {
                     <GraphiQL.Toolbar>
                         <GraphiQL.Button
                             onClick={() => this._graphiql.handlePrettifyQuery()}
-                            label="Prettify"
-                            title="Prettify Query (Shift-Ctrl-P)"
+                            label='Prettify'
+                            title='Prettify Query (Shift-Ctrl-P)'
                         />
                         <GraphiQL.Button
                             onClick={() => this._graphiql.handleToggleHistory()}
-                            label="History"
-                            title="Show History"
+                            label='History'
+                            title='Show History'
                         />
                         <GraphiQL.Button
                             onClick={this._handleToggleExplorer}
-                            label="Explorer"
-                            title="Toggle Explorer"
+                            label='Explorer'
+                            title='Toggle Explorer'
                         />
                     </GraphiQL.Toolbar>
                 </GraphiQL>
@@ -249,7 +267,7 @@ class App extends Component {
     }
 }
 
-export function graphiqlApp(endpoint, discovery, elem) {
+export function graphiqlApp(endpoint: string, discovery?: Object, elem?: Element) {
     return render(
         <App endpoint={endpoint} discovery={discovery} />,
         elem || document.getElementById('root')

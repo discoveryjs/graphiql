@@ -26,6 +26,6 @@ export class Discovery extends React.Component<DiscoveryProps> {
     }
 
     render() {
-        return <div ref={this.ref} className='discovery-root' />
+        return <div ref={this.ref} className='discovery-root' />;
     }
 }

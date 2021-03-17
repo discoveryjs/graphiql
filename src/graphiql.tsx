@@ -3,7 +3,7 @@ import React, {
     PropsWithChildren,
     MouseEventHandler,
     Component,
-    FunctionComponent,
+    FunctionComponent
 } from 'react';
 import {
     buildClientSchema,
@@ -15,7 +15,7 @@ import {
     GraphQLType,
     ValidationRule,
     FragmentDefinitionNode,
-    DocumentNode,
+    DocumentNode
 } from 'graphql';
 import copyToClipboard from 'copy-to-clipboard';
 import { getFragmentDependenciesForAST } from 'graphql-language-service-utils';
@@ -41,7 +41,7 @@ import mergeAST from 'graphiql/dist/utility/mergeAst';
 import {
     introspectionQuery,
     introspectionQueryName,
-    introspectionQuerySansSubscriptions,
+    introspectionQuerySansSubscriptions
 } from 'graphiql/dist/utility/introspectionQueries';
 import { dset } from 'dset/merge';
 import { Discovery } from './discovery';
@@ -55,8 +55,9 @@ import type {
     SyncFetcherResult,
     Observable,
     Unsubscribable,
-    FetcherResultPayload,
+    FetcherResultPayload
 } from '@graphiql/toolkit';
+import type CodeMirror from 'codemirror';
 
 const DEFAULT_DOC_EXPLORER_WIDTH = 350;
 
@@ -67,8 +68,8 @@ if (majorVersion < 16) {
         [
             'GraphiQL 0.18.0 and after is not compatible with React 15 or below.',
             'If you are using a CDN source (jsdelivr, unpkg, etc), follow this example:',
-            'https://github.com/graphql/graphiql/blob/master/examples/graphiql-cdn/index.html#L49',
-        ].join('\n'),
+            'https://github.com/graphql/graphiql/blob/master/examples/graphiql-cdn/index.html#L49'
+        ].join('\n')
     );
 }
 
@@ -117,7 +118,6 @@ export type GraphiQLProps = {
     docExplorerOpen?: boolean;
     toolbar?: GraphiQLToolbarConfig;
     discovery: any;
-    onQueryChange: any;
 };
 
 export type GraphiQLState = {
@@ -229,7 +229,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
                 : getSelectedOperationName(
                     undefined,
                     this._storage.get('operationName') as string,
-                    queryFacts && queryFacts.operations,
+                    queryFacts && queryFacts.operations
                 );
 
         // prop can be supplied to open docExplorer initially
@@ -280,7 +280,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
                 DEFAULT_DOC_EXPLORER_WIDTH,
             isWaitingForResponse: false,
             subscription: null,
-            ...queryFacts,
+            ...queryFacts
         };
     }
 
@@ -299,6 +299,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
 
         global.g = this;
     }
+    // eslint-disable-next-line camelcase
     UNSAFE_componentWillMount() {
         this.componentIsMounted = false;
     }
@@ -347,7 +348,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
                 nextQuery,
                 nextOperationName,
                 this.state.operations,
-                nextSchema,
+                nextSchema
             );
 
             if (updatedQueryAttributes !== undefined) {
@@ -373,7 +374,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
                 variables: nextVariables,
                 headers: nextHeaders,
                 operationName: nextOperationName,
-                response: nextResponse,
+                response: nextResponse
             },
             () => {
                 if (this.state.schema === undefined) {
@@ -383,7 +384,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
 
                     this.fetchSchema();
                 }
-            },
+            }
         );
     }
 
@@ -407,51 +408,51 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
         const children = React.Children.toArray(this.props.children);
 
         const logo = find(children, child =>
-            isChildComponentType(child, GraphiQL.Logo),
+            isChildComponentType(child, GraphiQL.Logo)
         ) || <GraphiQL.Logo />;
 
         const toolbar = find(children, child =>
-            isChildComponentType(child, GraphiQL.Toolbar),
+            isChildComponentType(child, GraphiQL.Toolbar)
         ) || (
-                <GraphiQL.Toolbar>
-                    <ToolbarButton
-                        onClick={this.handlePrettifyQuery}
-                        title="Prettify Query (Shift-Ctrl-P)"
-                        label="Prettify"
-                    />
-                    <ToolbarButton
-                        onClick={this.handleMergeQuery}
-                        title="Merge Query (Shift-Ctrl-M)"
-                        label="Merge"
-                    />
-                    <ToolbarButton
-                        onClick={this.handleCopyQuery}
-                        title="Copy Query (Shift-Ctrl-C)"
-                        label="Copy"
-                    />
-                    <ToolbarButton
-                        onClick={this.handleToggleHistory}
-                        title="Show History"
-                        label="History"
-                    />
-                    {this.props.toolbar?.additionalContent
-                        ? this.props.toolbar.additionalContent
-                        : null}
-                </GraphiQL.Toolbar>
-            );
+            <GraphiQL.Toolbar>
+                <ToolbarButton
+                    onClick={this.handlePrettifyQuery}
+                    title="Prettify Query (Shift-Ctrl-P)"
+                    label="Prettify"
+                />
+                <ToolbarButton
+                    onClick={this.handleMergeQuery}
+                    title="Merge Query (Shift-Ctrl-M)"
+                    label="Merge"
+                />
+                <ToolbarButton
+                    onClick={this.handleCopyQuery}
+                    title="Copy Query (Shift-Ctrl-C)"
+                    label="Copy"
+                />
+                <ToolbarButton
+                    onClick={this.handleToggleHistory}
+                    title="Show History"
+                    label="History"
+                />
+                {this.props.toolbar?.additionalContent
+                    ? this.props.toolbar.additionalContent
+                    : null}
+            </GraphiQL.Toolbar>
+        );
 
         const footer = find(children, child =>
-            isChildComponentType(child, GraphiQL.Footer),
+            isChildComponentType(child, GraphiQL.Footer)
         );
 
         const queryWrapStyle = {
             WebkitFlex: this.state.editorFlex,
-            flex: this.state.editorFlex,
+            flex: this.state.editorFlex
         };
 
         const docWrapStyle = {
             display: 'block',
-            width: this.state.docExplorerWidth,
+            width: this.state.docExplorerWidth
         };
         const docExplorerWrapClasses =
             'docExplorerWrap' +
@@ -460,27 +461,23 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
         const historyPaneStyle = {
             display: this.state.historyPaneOpen ? 'block' : 'none',
             width: '230px',
-            zIndex: 7,
+            zIndex: 7
         };
 
         const secondaryEditorOpen = this.state.secondaryEditorOpen;
         const secondaryEditorStyle = {
             height: secondaryEditorOpen
                 ? this.state.secondaryEditorHeight
-                : undefined,
+                : undefined
         };
 
         return (
             <div
-                ref={n => {
-                    this.graphiqlContainer = n;
-                }}
+                ref={node => this.graphiqlContainer = node}
                 className="graphiql-container">
                 <div className="historyPaneWrap" style={historyPaneStyle}>
                     <QueryHistory
-                        ref={node => {
-                            this._queryHistory = node;
-                        }}
+                        ref={node => this._queryHistory = node}
                         operationName={this.state.operationName}
                         query={this.state.query}
                         variables={this.state.variables}
@@ -517,17 +514,13 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
                         )}
                     </div>
                     <div
-                        ref={n => {
-                            this.editorBarComponent = n;
-                        }}
+                        ref={node => this.editorBarComponent = node}
                         className="editorBar"
                         onDoubleClick={this.handleResetResize}
                         onMouseDown={this.handleResizeStart}>
                         <div className="queryWrap" style={queryWrapStyle}>
                             <QueryEditor
-                                ref={n => {
-                                    this.queryEditorComponent = n;
-                                }}
+                                ref={node => this.queryEditorComponent = node}
                                 schema={this.state.schema}
                                 validationRules={this.props.validationRules}
                                 value={this.state.query}
@@ -554,14 +547,14 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
                                     className="secondary-editor-title variable-editor-title"
                                     id="secondary-editor-title"
                                     style={{
-                                        cursor: secondaryEditorOpen ? 'row-resize' : 'n-resize',
+                                        cursor: secondaryEditorOpen ? 'row-resize' : 'n-resize'
                                     }}
                                     onMouseDown={this.handleSecondaryEditorResizeStart}>
                                     <div
                                         style={{
                                             cursor: 'pointer',
                                             color: this.state.variableEditorActive ? '#000' : 'gray',
-                                            display: 'inline-block',
+                                            display: 'inline-block'
                                         }}
                                         onClick={this.handleOpenVariableEditorTab}
                                         onMouseDown={this.handleTabClickPropogation}>
@@ -573,7 +566,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
                                                 cursor: 'pointer',
                                                 color: this.state.headerEditorActive ? '#000' : 'gray',
                                                 display: 'inline-block',
-                                                marginLeft: '20px',
+                                                marginLeft: '20px'
                                             }}
                                             onClick={this.handleOpenHeaderEditorTab}
                                             onMouseDown={this.handleTabClickPropogation}>
@@ -582,9 +575,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
                                     )}
                                 </div>
                                 <VariableEditor
-                                    ref={n => {
-                                        this.variableEditorComponent = n;
-                                    }}
+                                    ref={node => this.variableEditorComponent = node}
                                     value={this.state.variables}
                                     variableToType={this.state.variableToType}
                                     onEdit={this.handleEditVariables}
@@ -598,9 +589,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
                                 />
                                 {this.state.headerEditorEnabled && (
                                     <HeaderEditor
-                                        ref={n => {
-                                            this.headerEditorComponent = n;
-                                        }}
+                                        ref={node => this.headerEditorComponent = node}
                                         value={this.state.headers}
                                         onEdit={this.handleEditHeaders}
                                         onHintInformationRender={this.handleHintInformationRender}
@@ -615,11 +604,6 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
                             </section>
                         </div>
                         <div className="resultWrap">
-                            {this.state.isWaitingForResponse && (
-                                <div className="spinner-container">
-                                    <div className="spinner" />
-                                </div>
-                            )}
                             <Discovery
                                 discovery={this.props.discovery}
                             />
@@ -635,9 +619,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
                             onMouseDown={this.handleDocsResizeStart}
                         />
                         <DocExplorer
-                            ref={c => {
-                                this.docExplorerComponent = c;
-                            }}
+                            ref={node => this.docExplorerComponent = node}
                             schema={this.state.schema}>
                             <button
                                 className="docExplorerHide"
@@ -738,7 +720,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
         const { insertions, result } = fillLeafs(
             this.state.schema,
             this.state.query,
-            this.props.getDefaultFieldNames,
+            this.props.getDefaultFieldNames
         );
         if (insertions && insertions.length > 0) {
             const editor = this.getQueryEditor();
@@ -755,9 +737,9 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
                             {
                                 className: 'autoInsertedLeaf',
                                 clearOnEnter: true,
-                                title: 'Automatically added leaf fields',
-                            },
-                        ),
+                                title: 'Automatically added leaf fields'
+                            }
+                        )
                     );
                     setTimeout(() => markers.forEach(marker => marker.clear()), 7000);
                     let newCursorIndex = cursorIndex;
@@ -781,7 +763,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
 
         const fetcherOpts: FetcherOpts = {
             shouldPersistHeaders: Boolean(this.props.shouldPersistHeaders),
-            documentAST: this.state.documentAST,
+            documentAST: this.state.documentAST
         };
         if (this.state.headers && this.state.headers.trim().length > 2) {
             fetcherOpts.headers = JSON.parse(this.state.headers);
@@ -794,15 +776,15 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
             fetcher(
                 {
                     query: introspectionQuery,
-                    operationName: introspectionQueryName,
+                    operationName: introspectionQueryName
                 },
-                fetcherOpts,
-            ),
+                fetcherOpts
+            )
         );
 
         if (!isPromise(fetch)) {
             this.setState({
-                response: 'Fetcher did not return a Promise for introspection.',
+                response: 'Fetcher did not return a Promise for introspection.'
             });
             return;
         }
@@ -819,14 +801,14 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
                     fetcher(
                         {
                             query: introspectionQuerySansSubscriptions,
-                            operationName: introspectionQueryName,
+                            operationName: introspectionQueryName
                         },
-                        fetcherOpts,
-                    ),
+                        fetcherOpts
+                    )
                 );
                 if (!isPromise(fetch)) {
                     throw new Error(
-                        'Fetcher did not return a Promise for introspection.',
+                        'Fetcher did not return a Promise for introspection.'
                     );
                 }
                 return fetch2;
@@ -849,14 +831,14 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
                     this.safeSetState({
                         // Set schema to `null` to explicitly indicate that no schema exists.
                         schema: undefined,
-                        response: responseString,
+                        response: responseString
                     });
                 }
             })
             .catch(error => {
                 this.safeSetState({
                     schema: undefined,
-                    response: error ? GraphiQL.formatError(error) : undefined,
+                    response: error ? GraphiQL.formatError(error) : undefined
                 });
             });
     }
@@ -867,7 +849,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
         headers: string,
         operationName: string,
         shouldPersistHeaders: boolean,
-        cb: (value: FetcherResult) => any,
+        cb: (value: FetcherResult) => any
     ): Promise<null | Unsubscribable> {
         const fetcher = this.props.fetcher;
         let jsonVariables = null;
@@ -905,18 +887,18 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
             } else {
                 visit(
                     parse(this.props.externalFragments, {
-                        experimentalFragmentVariables: true,
+                        experimentalFragmentVariables: true
                     }),
                     {
                         FragmentDefinition(def) {
                             externalFragments.set(def.name.value, def);
-                        },
-                    },
+                        }
+                    }
                 );
             }
             const fragmentDependencies = getFragmentDependenciesForAST(
                 this.state.documentAST!,
-                externalFragments,
+                externalFragments
             );
             if (fragmentDependencies.length > 0) {
                 query +=
@@ -931,13 +913,13 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
             {
                 query,
                 variables: jsonVariables,
-                operationName,
+                operationName
             },
             {
                 headers: jsonHeaders,
                 shouldPersistHeaders,
-                documentAST: this.state.documentAST,
-            },
+                documentAST: this.state.documentAST
+            }
         );
 
         return Promise.resolve<SyncFetcherResult>(fetch)
@@ -952,15 +934,15 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
                             this.safeSetState({
                                 isWaitingForResponse: false,
                                 response: error ? GraphiQL.formatError(error) : undefined,
-                                subscription: null,
+                                subscription: null
                             });
                         },
                         complete: () => {
                             this.safeSetState({
                                 isWaitingForResponse: false,
-                                subscription: null,
+                                subscription: null
                             });
-                        },
+                        }
                     });
 
                     return subscription;
@@ -972,19 +954,19 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
                             }
                             this.safeSetState({
                                 isWaitingForResponse: false,
-                                subscription: null,
+                                subscription: null
                             });
                         } catch (error) {
                             this.safeSetState({
                                 isWaitingForResponse: false,
                                 response: error ? GraphiQL.formatError(error) : undefined,
-                                subscription: null,
+                                subscription: null
                             });
                         }
                     })();
 
                     return {
-                        unsubscribe: () => value[Symbol.asyncIterator]().return?.(),
+                        unsubscribe: () => value[Symbol.asyncIterator]().return?.()
                     };
                 } else {
                     cb(value);
@@ -994,7 +976,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
             .catch(error => {
                 this.safeSetState({
                     isWaitingForResponse: false,
-                    response: error ? GraphiQL.formatError(error) : undefined,
+                    response: error ? GraphiQL.formatError(error) : undefined
                 });
                 return null;
             });
@@ -1008,7 +990,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
         });
         this._storage.set(
             'docExplorerOpen',
-            JSON.stringify(this.state.docExplorerOpen),
+            JSON.stringify(this.state.docExplorerOpen)
         );
     };
 
@@ -1036,7 +1018,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
             this.setState({
                 isWaitingForResponse: true,
                 response: undefined,
-                operationName,
+                operationName
             });
             this._storage.set('operationName', operationName as string);
 
@@ -1045,7 +1027,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
                     editedQuery,
                     variables,
                     headers,
-                    operationName,
+                    operationName
                 );
             }
 
@@ -1079,7 +1061,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
                                     .map(i => i.errors)
                                     // @ts-ignore
                                     .flat()
-                                    .filter(Boolean),
+                                    .filter(Boolean)
                             ];
 
                             if (maybeErrors.length) {
@@ -1088,11 +1070,12 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
 
                             for (const part of maybeMultipart) {
                                 // We pull out errors here, so we dont include it later
-                                const { path, data, errors: _errors, ...rest } = part;
+                                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                                const { path, data, errors, ...rest } = part;
                                 if (path) {
                                     if (!data) {
                                         throw new Error(
-                                            `Expected part to contain a data property, but got ${part}`,
+                                            `Expected part to contain a data property, but got ${part}`
                                         );
                                     }
 
@@ -1106,29 +1089,29 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
                                 // Ensures we also bring extensions and alike along for the ride
                                 fullResponse = {
                                     ...payload,
-                                    ...rest,
+                                    ...rest
                                 };
                             }
 
                             this.setState({
                                 isWaitingForResponse: false,
-                                response: GraphiQL.formatResult(fullResponse),
+                                response: GraphiQL.formatResult(fullResponse)
                             });
                         } else {
                             this.setState({
                                 isWaitingForResponse: false,
-                                response: GraphiQL.formatResult(result),
+                                response: GraphiQL.formatResult(result)
                             });
                         }
                     }
-                },
+                }
             );
 
             this.setState({ subscription });
         } catch (error) {
             this.setState({
                 isWaitingForResponse: false,
-                response: error.message,
+                response: error.message
             });
         }
     };
@@ -1137,7 +1120,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
         const subscription = this.state.subscription;
         this.setState({
             isWaitingForResponse: false,
-            subscription: null,
+            subscription: null
         });
         if (subscription) {
             subscription.unsubscribe();
@@ -1180,7 +1163,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
         const editor = this.getQueryEditor();
         const editorContent = editor?.getValue() ?? '';
         const prettifiedEditorContent = print(
-            parse(editorContent, { experimentalFragmentVariables: true }),
+            parse(editorContent, { experimentalFragmentVariables: true })
         );
 
         if (prettifiedEditorContent !== editorContent) {
@@ -1194,7 +1177,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
             const prettifiedVariableEditorContent = JSON.stringify(
                 JSON.parse(variableEditorContent),
                 null,
-                2,
+                2
             );
             if (prettifiedVariableEditorContent !== variableEditorContent) {
                 variableEditor?.setValue(prettifiedVariableEditorContent);
@@ -1210,7 +1193,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
             const prettifiedHeaderEditorContent = JSON.stringify(
                 JSON.parse(headerEditorContent),
                 null,
-                2,
+                2
             );
             if (prettifiedHeaderEditorContent !== headerEditorContent) {
                 headerEditor?.setValue(prettifiedHeaderEditorContent);
@@ -1221,7 +1204,6 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
     };
 
     handleMergeQuery = () => {
-        // @ts-ignore
         const editor = this.getQueryEditor() as CodeMirror.Editor;
         const query = editor.getValue();
 
@@ -1238,11 +1220,11 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
             value,
             this.state.operationName,
             this.state.operations,
-            this.state.schema,
+            this.state.schema
         );
         this.setState({
             query: value,
-            ...queryFacts,
+            ...queryFacts
         });
         this._storage.set('query', value);
         if (this.props.onEditQuery) {
@@ -1269,7 +1251,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
         query: string,
         operationName?: string,
         prevOperations?: OperationDefinitionNode[],
-        schema?: GraphQLSchema,
+        schema?: GraphQLSchema
     ) => {
         const queryFacts = getOperationFacts(schema, query);
         if (queryFacts) {
@@ -1277,7 +1259,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
             const updatedOperationName = getSelectedOperationName(
                 prevOperations,
                 operationName,
-                queryFacts.operations,
+                queryFacts.operations
             );
 
             // Report changing of operationName if it changed.
@@ -1292,7 +1274,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
 
             return {
                 operationName: updatedOperationName,
-                ...queryFacts,
+                ...queryFacts
             };
         }
     };
@@ -1330,7 +1312,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
             (onRemoveFn = () => {
                 elem.removeEventListener('DOMNodeRemoved', onRemoveFn);
                 elem.removeEventListener('click', this._onClickHintInformation);
-            }),
+            })
         );
     };
 
@@ -1339,7 +1321,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
     };
 
     private _onClickHintInformation = (
-        event: MouseEvent | React.MouseEvent<HTMLDivElement>,
+        event: MouseEvent | React.MouseEvent<HTMLDivElement>
     ) => {
         if (
             event?.currentTarget &&
@@ -1359,8 +1341,8 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
                     debounce(500, () =>
                         this._storage.set(
                             'docExplorerOpen',
-                            JSON.stringify(this.state.docExplorerOpen),
-                        ),
+                            JSON.stringify(this.state.docExplorerOpen)
+                        )
                     )();
                 }
             }
@@ -1373,7 +1355,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
         }
         this._storage.set(
             'docExplorerOpen',
-            JSON.stringify(!this.state.docExplorerOpen),
+            JSON.stringify(!this.state.docExplorerOpen)
         );
         this.setState({ docExplorerOpen: !this.state.docExplorerOpen });
     };
@@ -1384,7 +1366,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
         }
         this._storage.set(
             'historyPaneOpen',
-            JSON.stringify(!this.state.historyPaneOpen),
+            JSON.stringify(!this.state.historyPaneOpen)
         );
         this.setState({ historyPaneOpen: !this.state.historyPaneOpen });
     };
@@ -1393,7 +1375,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
         query?: string,
         variables?: string,
         headers?: string,
-        operationName?: string,
+        operationName?: string
     ) => {
         if (query) {
             this.handleEditQuery(query);
@@ -1428,7 +1410,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
             const rightSize = editorBar.clientWidth - leftSize;
             this.setState({ editorFlex: leftSize / rightSize });
             debounce(500, () =>
-                this._storage.set('editorFlex', JSON.stringify(this.state.editorFlex)),
+                this._storage.set('editorFlex', JSON.stringify(this.state.editorFlex))
             )();
         };
 
@@ -1492,24 +1474,24 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
                 }
                 this._storage.set(
                     'docExplorerOpen',
-                    JSON.stringify(this.state.docExplorerOpen),
+                    JSON.stringify(this.state.docExplorerOpen)
                 );
                 this.setState({ docExplorerOpen: false });
             } else {
                 this.setState({
                     docExplorerOpen: true,
-                    docExplorerWidth: Math.min(docsSize, 650),
+                    docExplorerWidth: Math.min(docsSize, 650)
                 });
                 debounce(500, () =>
                     this._storage.set(
                         'docExplorerWidth',
-                        JSON.stringify(this.state.docExplorerWidth),
-                    ),
+                        JSON.stringify(this.state.docExplorerWidth)
+                    )
                 )();
             }
             this._storage.set(
                 'docExplorerOpen',
-                JSON.stringify(this.state.docExplorerOpen),
+                JSON.stringify(this.state.docExplorerOpen)
             );
         };
 
@@ -1519,8 +1501,8 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
                 debounce(500, () =>
                     this._storage.set(
                         'docExplorerWidth',
-                        JSON.stringify(this.state.docExplorerWidth),
-                    ),
+                        JSON.stringify(this.state.docExplorerWidth)
+                    )
                 )();
             }
 
@@ -1536,13 +1518,13 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
 
     private handleDocsResetResize = () => {
         this.setState({
-            docExplorerWidth: DEFAULT_DOC_EXPLORER_WIDTH,
+            docExplorerWidth: DEFAULT_DOC_EXPLORER_WIDTH
         });
         debounce(500, () =>
             this._storage.set(
                 'docExplorerWidth',
-                JSON.stringify(this.state.docExplorerWidth),
-            ),
+                JSON.stringify(this.state.docExplorerWidth)
+            )
         )();
     };
 
@@ -1556,21 +1538,21 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
 
     private handleOpenHeaderEditorTab: MouseEventHandler<
         HTMLDivElement
-    > = _clickEvent => {
+    > = (/* _clickEvent */) => {
         this.setState({
             headerEditorActive: true,
             variableEditorActive: false,
-            secondaryEditorOpen: true,
+            secondaryEditorOpen: true
         });
     };
 
     private handleOpenVariableEditorTab: MouseEventHandler<
         HTMLDivElement
-    > = _clickEvent => {
+    > = (/* _clickEvent */) => {
         this.setState({
             headerEditorActive: false,
             variableEditorActive: true,
-            secondaryEditorOpen: true,
+            secondaryEditorOpen: true
         });
     };
 
@@ -1597,19 +1579,19 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
             if (bottomSize < 60) {
                 this.setState({
                     secondaryEditorOpen: false,
-                    secondaryEditorHeight: hadHeight,
+                    secondaryEditorHeight: hadHeight
                 });
             } else {
                 this.setState({
                     secondaryEditorOpen: true,
-                    secondaryEditorHeight: bottomSize,
+                    secondaryEditorHeight: bottomSize
                 });
             }
             debounce(500, () =>
                 this._storage.set(
                     'secondaryEditorHeight',
-                    JSON.stringify(this.state.secondaryEditorHeight),
-                ),
+                    JSON.stringify(this.state.secondaryEditorHeight)
+                )
             )();
         };
 
@@ -1665,41 +1647,40 @@ const formatSingleError = (error: Error) => ({
     ...error,
     // Raise these details even if they're non-enumerable
     message: error.message,
-    stack: error.stack,
+    stack: error.stack
 });
 
 const defaultQuery = `# Welcome to GraphiQL
-  #
-  # GraphiQL is an in-browser tool for writing, validating, and
-  # testing GraphQL queries.
-  #
-  # Type queries into this side of the screen, and you will see intelligent
-  # typeaheads aware of the current GraphQL type schema and live syntax and
-  # validation errors highlighted within the text.
-  #
-  # GraphQL queries typically start with a "{" character. Lines that start
-  # with a # are ignored.
-  #
-  # An example GraphQL query might look like:
-  #
-  #     {
-  #       field(arg: "value") {
-  #         subField
-  #       }
-  #     }
-  #
-  # Keyboard shortcuts:
-  #
-  #  Prettify Query:  Shift-Ctrl-P (or press the prettify button above)
-  #
-  #     Merge Query:  Shift-Ctrl-M (or press the merge button above)
-  #
-  #       Run Query:  Ctrl-Enter (or press the play button above)
-  #
-  #   Auto Complete:  Ctrl-Space (or just start typing)
-  #
-  
-  `;
+#
+# GraphiQL is an in-browser tool for writing, validating, and
+# testing GraphQL queries.
+#
+# Type queries into this side of the screen, and you will see intelligent
+# typeaheads aware of the current GraphQL type schema and live syntax and
+# validation errors highlighted within the text.
+#
+# GraphQL queries typically start with a "{" character. Lines that start
+# with a # are ignored.
+#
+# An example GraphQL query might look like:
+#
+#     {
+#       field(arg: "value") {
+#         subField
+#       }
+#     }
+#
+# Keyboard shortcuts:
+#
+#  Prettify Query:  Shift-Ctrl-P (or press the prettify button above)
+#
+#     Merge Query:  Shift-Ctrl-M (or press the merge button above)
+#
+#       Run Query:  Ctrl-Enter (or press the play button above)
+#
+#   Auto Complete:  Ctrl-Space (or just start typing)
+#
+`;
 
 // Duck-type promise detection.
 function isPromise<T>(value: Promise<T> | any): value is Promise<T> {
@@ -1717,7 +1698,7 @@ function observableToPromise<T>(observable: Observable<T>): Promise<T> {
             error: reject,
             complete: () => {
                 reject(new Error('no value resolved'));
-            },
+            }
         });
     });
 }
@@ -1743,7 +1724,7 @@ function isAsyncIterable(input: unknown): input is AsyncIterable<unknown> {
 }
 
 function asyncIterableToPromise<T>(
-    input: AsyncIterable<T> | AsyncIterableIterator<T>,
+    input: AsyncIterable<T> | AsyncIterableIterator<T>
 ): Promise<T> {
     return new Promise((resolve, reject) => {
         // Also support AsyncGenerator on Safari iOS.
@@ -1771,7 +1752,7 @@ function asyncIterableToPromise<T>(
 }
 
 function fetcherReturnToPromise(
-    fetcherResult: FetcherReturnType,
+    fetcherResult: FetcherReturnType
 ): Promise<FetcherResult> {
     return Promise.resolve(fetcherResult).then(fetcherResult => {
         if (isAsyncIterable(fetcherResult)) {
@@ -1786,7 +1767,7 @@ function fetcherReturnToPromise(
 // Determines if the React child is of the same type of the provided React component
 function isChildComponentType<T extends ComponentType>(
     child: any,
-    component: T,
+    component: T
 ): child is T {
     if (
         child?.type?.displayName &&

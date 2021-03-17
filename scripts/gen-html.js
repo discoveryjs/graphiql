@@ -10,7 +10,7 @@ module.exports = function() {
     return template
         .replace('%TITLE%', TITLE)
         .replace('%GRAPHQL_ENDPOINT%', GRAPHQL_ENDPOINT);
-}
+};
 
 if (require.main === module) {
     console.log(module.exports());

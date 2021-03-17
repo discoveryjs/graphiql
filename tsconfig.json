@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "target": "es2020",
+        "allowJs": true,
+        "module": "ES2020",
+        "outDir": "./dist",
+        "rootDir": "src",
+        "lib": ["es6", "dom", "esnext.asynciterable"],
+        "moduleResolution": "node",
+        "allowSyntheticDefaultImports": true,
+        "jsx": "react",
+        "noEmit": true
+    },
+    "include": [
+        "src/**/*"
+    ]
+}
