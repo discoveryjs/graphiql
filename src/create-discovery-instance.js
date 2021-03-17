@@ -15,8 +15,6 @@ export function createDiscoveryInstance(options) {
     );
     instance.dom.loadingOverlay.className = 'loading-overlay done';
 
-    instance.darkmode.subscribe(dark => document.body.classList.toggle('discovery-root-darkmode', dark), true);
-
     instance.progressbar = DiscoveryApp.prototype.progressbar;
     instance.loadDataFromUrl = DiscoveryApp.prototype.loadDataFromUrl;
     instance.trackLoadDataProgress = DiscoveryApp.prototype.trackLoadDataProgress;

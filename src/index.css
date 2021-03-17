@@ -13,10 +13,17 @@
 .graphiql-explorer-root > * > * {
     outline: none;
 }
+.graphiql-container .docExplorerWrap {
+    z-index: 20000;
+}
 
 /*
     Dark mode
 */
+
+.graphiql-container.darkmode {
+    color: #ccc;
+}
 
 .graphiql-container.darkmode select,
 .graphiql-container.darkmode input {
@@ -72,6 +79,10 @@
     background: #21262b;
 }
 
+.graphiql-container.darkmode .doc-type-description {
+    color: #888;
+}
+
 .graphiql-container.darkmode .graphiql-operation-title-bar {
     color: #f57966 !important;
 }
@@ -106,12 +117,16 @@
 }
 
 .graphiql-container.darkmode .search-box {
-    margin: auto auto 10px auto;
     border: none;
+}
+.graphiql-container.darkmode .search-box-icon {
+    color: #888;
 }
 .graphiql-container.darkmode .search-box input {
     background: #1E2127;
-    padding-left: 28px;
+    margin-left: 12px;
+    margin-right: 8px;
+    padding-left: 8px;
 }
 
 .graphiql-container.darkmode .search-box .search-box-clear,
@@ -159,7 +174,7 @@
 }
 
 .graphiql-container.darkmode .doc-category-title {
-    border-bottom: 1px solid #181a1f;
+    border-bottom: 1px solid #333844;
     color: #cacdd3;
 }
 
@@ -201,6 +216,19 @@
 .graphiql-container.darkmode .CodeMirror-lint-tooltip {
     background: #1a1e22 !important;
     color: red;
+}
+.graphiql-container.darkmode .CodeMirror-focused .CodeMirror-selected {
+    background-color: rgba(0, 170, 255, 0.22);
+}
+.graphiql-container.darkmode .CodeMirror-selected {
+    background-color: rgba(126, 126, 126, 0.3);
+}
+
+.graphiql-container.darkmode .CodeMirror-info {
+    background: #323232;
+    color: #ccc;
+    border: 1px solid rgba(176, 176, 176, 0.65);
+    box-shadow: 2px 3px 5px rgba(0, 0, 0, .2);
 }
 
 .graphiql-container.darkmode .CodeMirror-hints {

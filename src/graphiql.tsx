@@ -45,6 +45,7 @@ import React, {
   } from 'graphiql/dist/utility/introspectionQueries';
   import { dset } from 'dset/merge';
   import { Discovery } from './discovery';
+  import './codemirror-info-addon'; // to fix injection into body
   
   import type {
     Fetcher,
