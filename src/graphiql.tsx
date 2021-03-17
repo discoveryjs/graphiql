@@ -29,6 +29,8 @@ import { VariableEditor } from 'graphiql/dist/components/VariableEditor';
 import { HeaderEditor } from 'graphiql/dist/components/HeaderEditor';
 import { DocExplorer } from 'graphiql/dist/components/DocExplorer';
 import { QueryHistory } from 'graphiql/dist/components/QueryHistory';
+import { makeDefaultArg, getDefaultScalarArgValue } from './custom-args';
+import GraphiQLExplorer from 'graphiql-explorer';
 import CodeMirrorSizer from 'graphiql/dist/utility/CodeMirrorSizer';
 import StorageAPI, { Storage } from 'graphiql/dist/utility/StorageAPI';
 import getOperationFacts, { VariableToType } from 'graphiql/dist/utility/getQueryFacts';
@@ -110,14 +112,18 @@ export type GraphiQLProps = {
     onEditHeaders?: (value: string) => void;
     onEditOperationName?: (operationName: string) => void;
     onToggleDocs?: (docExplorerOpen: boolean) => void;
+    onToggleExplorer?: (explorerIsOpen: boolean) => void;
     getDefaultFieldNames?: GetDefaultFieldNamesFn;
     editorTheme?: string;
     onToggleHistory?: (historyPaneOpen: boolean) => void;
     ResultsTooltip?: typeof Component | FunctionComponent;
     readOnly?: boolean;
     docExplorerOpen?: boolean;
+    explorerIsOpen?: boolean;
     toolbar?: GraphiQLToolbarConfig;
     discovery: any;
+    dzen: boolean;
+    darkmode: boolean;
 };
 
 export type GraphiQLState = {
@@ -127,6 +133,7 @@ export type GraphiQLState = {
     headers?: string;
     operationName?: string;
     docExplorerOpen: boolean;
+    explorerIsOpen: boolean;
     response?: string;
     editorFlex: number;
     secondaryEditorOpen: boolean;
@@ -232,12 +239,19 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
                     queryFacts && queryFacts.operations
                 );
 
-        // prop can be supplied to open docExplorer initially
+        // prop can be supplied to open docExplorer/explorerIsOpen initially
         let docExplorerOpen = props.docExplorerOpen || false;
+        let explorerIsOpen = props.explorerIsOpen !== undefined
+            ? props.explorerIsOpen
+            : true;
 
         // but then local storage state overrides it
         if (this._storage.get('docExplorerOpen')) {
             docExplorerOpen = this._storage.get('docExplorerOpen') === 'true';
+        }
+
+        if (this._storage.get('explorerIsOpen')) {
+            explorerIsOpen = this._storage.get('explorerIsOpen') === 'true';
         }
 
         // initial secondary editor pane open
@@ -261,6 +275,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
             headers: headers as string,
             operationName,
             docExplorerOpen,
+            explorerIsOpen,
             response: props.response,
             editorFlex: Number(this._storage.get('editorFlex')) || 1,
             secondaryEditorOpen,
@@ -474,7 +489,19 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
         return (
             <div
                 ref={node => this.graphiqlContainer = node}
-                className="graphiql-container">
+                className={`graphiql-container ${this.props.dzen ? 'dzen' : ''} ${this.props.darkmode ? 'darkmode' : ''}`}>
+                <GraphiQLExplorer
+                    schema={this.state.schema}
+                    query={this.state.query}
+                    onEdit={this.handleEditQuery}
+                    onRunOperation={(operationName: string) =>
+                        this.handleRunQuery(operationName)
+                    }
+                    explorerIsOpen={this.state.explorerIsOpen}
+                    onToggleExplorer={this.handleToggleExplorer}
+                    getDefaultScalarArgValue={getDefaultScalarArgValue}
+                    makeDefaultArg={makeDefaultArg}
+                />
                 <div className="historyPaneWrap" style={historyPaneStyle}>
                     <QueryHistory
                         ref={node => this._queryHistory = node}
@@ -1358,6 +1385,17 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
             JSON.stringify(!this.state.docExplorerOpen)
         );
         this.setState({ docExplorerOpen: !this.state.docExplorerOpen });
+    };
+
+    handleToggleExplorer = () => {
+        if (typeof this.props.onToggleExplorer === 'function') {
+            this.props.onToggleExplorer(!this.state.explorerIsOpen);
+        }
+        this._storage.set(
+            'explorerIsOpen',
+            JSON.stringify(!this.state.explorerIsOpen)
+        );
+        this.setState({ explorerIsOpen: !this.state.explorerIsOpen });
     };
 
     handleToggleHistory = () => {

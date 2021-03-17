@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { GraphiQL } from './graphiql';
-import GraphiQLExplorer from 'graphiql-explorer';
 import { buildClientSchema, getIntrospectionQuery, parse } from 'graphql';
-import { makeDefaultArg, getDefaultScalarArgValue } from './custom-args';
 import * as base64 from '@discoveryjs/discovery/src/core/utils/base64';
 
 const getFetcher = (endpoint: string) => (params: any) => {
@@ -191,10 +189,6 @@ class App extends Component<AppProps, AppState> {
         });
     }
 
-    _handleToggleExplorer = () => {
-        this.setState({ explorerIsOpen: !this.state.explorerIsOpen });
-    };
-
     getDataFetcher = (endpoint: string) => (params: any) => {
         return this.discovery.loadDataFromUrl(
             endpoint,
@@ -221,48 +215,36 @@ class App extends Component<AppProps, AppState> {
         const { query, variables, schema, dzen, darkmode } = this.state;
 
         return (
-            <div className={`graphiql-container ${dzen ? 'dzen' : ''} ${darkmode ? 'darkmode' : ''}`}>
-                <GraphiQLExplorer
-                    schema={schema}
-                    query={query}
-                    onEdit={this._handleEditQuery}
-                    onRunOperation={(operationName: string) =>
-                        this._graphiql.handleRunQuery(operationName)
-                    }
-                    explorerIsOpen={this.state.explorerIsOpen}
-                    onToggleExplorer={this._handleToggleExplorer}
-                    getDefaultScalarArgValue={getDefaultScalarArgValue}
-                    makeDefaultArg={makeDefaultArg}
-                />
-                <GraphiQL
-                    ref={ref => this._graphiql = ref}
-                    fetcher={this.getDataFetcher(this.endpoint)}
-                    schema={schema}
-                    query={query}
-                    variables={variables}
-                    onEditQuery={this._handleEditQuery}
-                    onEditVariables={this._handleEditVariables}
-                    discovery={this.discovery}
-                >
-                    <GraphiQL.Toolbar>
-                        <GraphiQL.Button
-                            onClick={() => this._graphiql.handlePrettifyQuery()}
-                            label='Prettify'
-                            title='Prettify Query (Shift-Ctrl-P)'
-                        />
-                        <GraphiQL.Button
-                            onClick={() => this._graphiql.handleToggleHistory()}
-                            label='History'
-                            title='Show History'
-                        />
-                        <GraphiQL.Button
-                            onClick={this._handleToggleExplorer}
-                            label='Explorer'
-                            title='Toggle Explorer'
-                        />
-                    </GraphiQL.Toolbar>
-                </GraphiQL>
-            </div>
+            <GraphiQL
+                ref={ref => this._graphiql = ref}
+                fetcher={this.getDataFetcher(this.endpoint)}
+                schema={schema}
+                query={query}
+                variables={variables}
+                onEditQuery={this._handleEditQuery}
+                onEditVariables={this._handleEditVariables}
+                discovery={this.discovery}
+                dzen={dzen}
+                darkmode={darkmode}
+            >
+                <GraphiQL.Toolbar>
+                    <GraphiQL.Button
+                        onClick={() => this._graphiql.handlePrettifyQuery()}
+                        label='Prettify'
+                        title='Prettify Query (Shift-Ctrl-P)'
+                    />
+                    <GraphiQL.Button
+                        onClick={() => this._graphiql.handleToggleHistory()}
+                        label='History'
+                        title='Show History'
+                    />
+                    <GraphiQL.Button
+                        onClick={() => this._graphiql.handleToggleExplorer()}
+                        label='Explorer'
+                        title='Toggle Explorer'
+                    />
+                </GraphiQL.Toolbar>
+            </GraphiQL>
         );
     }
 }
