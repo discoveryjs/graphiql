@@ -11,7 +11,7 @@ import CodeMirror from 'codemirror';
 // patch CodeMirror.defineOption to avoid overriding of "info" option
 // initially this patch is needed to avoid insert into document.body
 const origDefineOption = CodeMirror.defineOption;
-CodeMirror.defineOption = function(name, _default, handler, ...args) {
+CodeMirror.defineOption = function (name, _default, handler, ...args) {
     if (name === 'info') {
         handler = (cm, options, old) => {
             if (old && old !== CodeMirror.Init) {
@@ -20,7 +20,7 @@ CodeMirror.defineOption = function(name, _default, handler, ...args) {
                 clearTimeout(cm.state.info.hoverTimeout);
                 delete cm.state.info;
             }
-        
+
             if (options) {
                 const state = cm.state.info = createState(options);
                 state.onMouseOver = onMouseOver.bind(null, cm);
@@ -33,135 +33,135 @@ CodeMirror.defineOption = function(name, _default, handler, ...args) {
 };
 
 function createState(options) {
-  return {
-    options: typeof options === 'function'
-        ? { render: options }
-        : options === true
-            ? {}
-            : options
-  };
+    return {
+        options: typeof options === 'function'
+            ? { render: options }
+            : options === true
+                ? {}
+                : options
+    };
 }
 
 function getHoverTime(cm) {
-  const options = cm.state.info.options;
-  return options && options.hoverTime || 500;
+    const options = cm.state.info.options;
+    return options && options.hoverTime || 500;
 }
 
 function onMouseOver(cm, e) {
-  const state = cm.state.info;
-  const target = e.target || e.srcElement;
+    const state = cm.state.info;
+    const target = e.target || e.srcElement;
 
-  if (target.nodeName !== 'SPAN' || state.hoverTimeout !== undefined) {
-    return;
-  }
+    if (target.nodeName !== 'SPAN' || state.hoverTimeout !== undefined) {
+        return;
+    }
 
-  const box = target.getBoundingClientRect();
+    const box = target.getBoundingClientRect();
 
-  const onMouseMove = function () {
-    clearTimeout(state.hoverTimeout);
+    const onMouseMove = function () {
+        clearTimeout(state.hoverTimeout);
+        state.hoverTimeout = setTimeout(onHover, hoverTime);
+    };
+
+    const onMouseOut = function () {
+        CodeMirror.off(document, 'mousemove', onMouseMove);
+        CodeMirror.off(cm.getWrapperElement(), 'mouseout', onMouseOut);
+        clearTimeout(state.hoverTimeout);
+        state.hoverTimeout = undefined;
+    };
+
+    const onHover = function () {
+        CodeMirror.off(document, 'mousemove', onMouseMove);
+        CodeMirror.off(cm.getWrapperElement(), 'mouseout', onMouseOut);
+        state.hoverTimeout = undefined;
+        onMouseHover(cm, box);
+    };
+
+    const hoverTime = getHoverTime(cm);
     state.hoverTimeout = setTimeout(onHover, hoverTime);
-  };
-
-  const onMouseOut = function () {
-    CodeMirror.off(document, 'mousemove', onMouseMove);
-    CodeMirror.off(cm.getWrapperElement(), 'mouseout', onMouseOut);
-    clearTimeout(state.hoverTimeout);
-    state.hoverTimeout = undefined;
-  };
-
-  const onHover = function () {
-    CodeMirror.off(document, 'mousemove', onMouseMove);
-    CodeMirror.off(cm.getWrapperElement(), 'mouseout', onMouseOut);
-    state.hoverTimeout = undefined;
-    onMouseHover(cm, box);
-  };
-
-  const hoverTime = getHoverTime(cm);
-  state.hoverTimeout = setTimeout(onHover, hoverTime);
-  CodeMirror.on(document, 'mousemove', onMouseMove);
-  CodeMirror.on(cm.getWrapperElement(), 'mouseout', onMouseOut);
+    CodeMirror.on(document, 'mousemove', onMouseMove);
+    CodeMirror.on(cm.getWrapperElement(), 'mouseout', onMouseOut);
 }
 
 function onMouseHover(cm, box) {
-  const pos = cm.coordsChar({
-    left: (box.left + box.right) / 2,
-    top: (box.top + box.bottom) / 2
-  });
-  const state = cm.state.info;
-  const options = state.options;
-  const render = options.render || cm.getHelper(pos, 'info');
+    const pos = cm.coordsChar({
+        left: (box.left + box.right) / 2,
+        top: (box.top + box.bottom) / 2
+    });
+    const state = cm.state.info;
+    const options = state.options;
+    const render = options.render || cm.getHelper(pos, 'info');
 
-  if (render) {
-    const token = cm.getTokenAt(pos, true);
+    if (render) {
+        const token = cm.getTokenAt(pos, true);
 
-    if (token) {
-      const info = render(token, options, cm, pos);
+        if (token) {
+            const info = render(token, options, cm, pos);
 
-      if (info) {
-        showPopup(cm, box, info);
-      }
+            if (info) {
+                showPopup(cm, box, info);
+            }
+        }
     }
-  }
 }
 
 function showPopup(cm, box, info) {
-  const { container } = cm.state.info.options;
-  const popup = document.createElement('div');
-  popup.className = 'CodeMirror-info';
-  popup.appendChild(info);
-  (container || cm.display.wrapper).append(popup);
-  const popupBox = popup.getBoundingClientRect();
-  const popupStyle = popup.currentStyle || window.getComputedStyle(popup);
-  const popupWidth = popupBox.right - popupBox.left + parseFloat(popupStyle.marginLeft) + parseFloat(popupStyle.marginRight);
-  const popupHeight = popupBox.bottom - popupBox.top + parseFloat(popupStyle.marginTop) + parseFloat(popupStyle.marginBottom);
-  let topPos = box.bottom;
+    const { container } = cm.state.info.options;
+    const popup = document.createElement('div');
+    popup.className = 'CodeMirror-info';
+    popup.appendChild(info);
+    (container || cm.display.wrapper).append(popup);
+    const popupBox = popup.getBoundingClientRect();
+    const popupStyle = popup.currentStyle || window.getComputedStyle(popup);
+    const popupWidth = popupBox.right - popupBox.left + parseFloat(popupStyle.marginLeft) + parseFloat(popupStyle.marginRight);
+    const popupHeight = popupBox.bottom - popupBox.top + parseFloat(popupStyle.marginTop) + parseFloat(popupStyle.marginBottom);
+    let topPos = box.bottom;
 
-  if (popupHeight > window.innerHeight - box.bottom - 15 && box.top > window.innerHeight - box.bottom) {
-    topPos = box.top - popupHeight;
-  }
-
-  if (topPos < 0) {
-    topPos = box.bottom;
-  }
-
-  let leftPos = Math.max(0, window.innerWidth - popupWidth - 15);
-
-  if (leftPos > box.left) {
-    leftPos = box.left;
-  }
-
-  popup.style.opacity = 1;
-  popup.style.top = topPos + 'px';
-  popup.style.left = leftPos + 'px';
-  let popupTimeout;
-
-  const onMouseOverPopup = function () {
-    clearTimeout(popupTimeout);
-  };
-
-  const onMouseOut = function () {
-    clearTimeout(popupTimeout);
-    popupTimeout = setTimeout(hidePopup, 200);
-  };
-
-  const hidePopup = function () {
-    CodeMirror.off(popup, 'mouseover', onMouseOverPopup);
-    CodeMirror.off(popup, 'mouseout', onMouseOut);
-    CodeMirror.off(cm.getWrapperElement(), 'mouseout', onMouseOut);
-
-    if (popup.style.opacity) {
-      popup.style.opacity = 0;
-      setTimeout(() => {
-        if (popup.parentNode) {
-          popup.remove();
-        }
-      }, 600);
-    } else if (popup.parentNode) {
-      popup.remove();
+    if (popupHeight > window.innerHeight - box.bottom - 15 && box.top > window.innerHeight - box.bottom) {
+        topPos = box.top - popupHeight;
     }
-  };
 
-  CodeMirror.on(popup, 'mouseover', onMouseOverPopup);
-  CodeMirror.on(popup, 'mouseout', onMouseOut);
-  CodeMirror.on(cm.getWrapperElement(), 'mouseout', onMouseOut);
+    if (topPos < 0) {
+        topPos = box.bottom;
+    }
+
+    let leftPos = Math.max(0, window.innerWidth - popupWidth - 15);
+
+    if (leftPos > box.left) {
+        leftPos = box.left;
+    }
+
+    popup.style.opacity = 1;
+    popup.style.top = topPos + 'px';
+    popup.style.left = leftPos + 'px';
+    let popupTimeout;
+
+    const onMouseOverPopup = function () {
+        clearTimeout(popupTimeout);
+    };
+
+    const onMouseOut = function () {
+        clearTimeout(popupTimeout);
+        popupTimeout = setTimeout(hidePopup, 200);
+    };
+
+    const hidePopup = function () {
+        CodeMirror.off(popup, 'mouseover', onMouseOverPopup);
+        CodeMirror.off(popup, 'mouseout', onMouseOut);
+        CodeMirror.off(cm.getWrapperElement(), 'mouseout', onMouseOut);
+
+        if (popup.style.opacity) {
+            popup.style.opacity = 0;
+            setTimeout(() => {
+                if (popup.parentNode) {
+                    popup.remove();
+                }
+            }, 600);
+        } else if (popup.parentNode) {
+            popup.remove();
+        }
+    };
+
+    CodeMirror.on(popup, 'mouseover', onMouseOverPopup);
+    CodeMirror.on(popup, 'mouseout', onMouseOut);
+    CodeMirror.on(cm.getWrapperElement(), 'mouseout', onMouseOut);
 }
