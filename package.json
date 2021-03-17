@@ -11,7 +11,7 @@
     "build:css": "npm run build:bundle -- src/index.css src/create-discovery-instance.css --log-level=error && node scripts/cleanup-css-hacks",
     "build": "npm run build:js && npm run build:css",
     "start": "npm run build && node scripts/server.js",
-    "dev": "mkdir -p dev && node scripts/gen-html > dev/index.html && npm run build:bundle -- src/index.jsx src/create-discovery-instance.js src/index.css src/create-discovery-instance.css --outdir=dev --servedir=dev --format=esm",
+    "dev": "mkdir -p dev && node scripts/gen-html > dev/index.html && npm run build:bundle -- src/index.jsx src/create-discovery-instance.js src/index.css src/create-discovery-instance.css --outdir=dev --servedir=dev --format=esm --sourcemap",
     "prepublish": "npm run build"
   },
   "devDependencies": {
