@@ -3,6 +3,7 @@
 - Added dark mode
 - Removed extra `.graphiql-container` wrapper element
 - Added explorer open state saving to localStorage
+- Added a resizer for explorer and tweaked resizer's appearance
 
 ## 1.2.0 (10-03-2021)
 

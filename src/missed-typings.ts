@@ -8,7 +8,7 @@ declare module 'graphiql-explorer' {
 
     type GraphiQLExplorerProps = {
         schema?: any;
-        query?: string
+        query?: string;
         onEdit?: (this: any, value: string) => void;
         onRunOperation?: (operationName: string) => void;
         explorerIsOpen?: boolean;

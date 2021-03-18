@@ -61,6 +61,7 @@ import type {
 } from '@graphiql/toolkit';
 import type CodeMirror from 'codemirror';
 
+const DEFAULT_EXPLORER_WIDTH = 320;
 const DEFAULT_DOC_EXPLORER_WIDTH = 350;
 
 const majorVersion = parseInt(React.version.slice(0, 2), 10);
@@ -144,6 +145,7 @@ export type GraphiQLState = {
     shouldPersistHeaders: boolean;
     historyPaneOpen: boolean;
     docExplorerWidth: number;
+    explorerWidth: number;
     isWaitingForResponse: boolean;
     subscription?: Unsubscribable | null;
     variableToType?: VariableToType;
@@ -293,6 +295,9 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
             docExplorerWidth:
                 Number(this._storage.get('docExplorerWidth')) ||
                 DEFAULT_DOC_EXPLORER_WIDTH,
+            explorerWidth:
+                Number(this._storage.get('explorerWidth')) ||
+                DEFAULT_EXPLORER_WIDTH,
             isWaitingForResponse: false,
             subscription: null,
             ...queryFacts
@@ -490,18 +495,28 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
             <div
                 ref={node => this.graphiqlContainer = node}
                 className={`graphiql-container ${this.props.dzen ? 'dzen' : ''} ${this.props.darkmode ? 'darkmode' : ''}`}>
-                <GraphiQLExplorer
-                    schema={this.state.schema}
-                    query={this.state.query}
-                    onEdit={this.handleEditQuery}
-                    onRunOperation={(operationName: string) =>
-                        this.handleRunQuery(operationName)
-                    }
-                    explorerIsOpen={this.state.explorerIsOpen}
-                    onToggleExplorer={this.handleToggleExplorer}
-                    getDefaultScalarArgValue={getDefaultScalarArgValue}
-                    makeDefaultArg={makeDefaultArg}
-                />
+                <div className="explorer-wrapper" style={{
+                    display: this.state.explorerIsOpen ? 'block' : 'none',
+                    width: this.state.explorerWidth
+                }}>
+                    <div
+                        className="docExplorerResizer"
+                        onDoubleClick={this.handleExplorerResetResize}
+                        onMouseDown={this.handleExplorerResizeStart}
+                    />
+                    <GraphiQLExplorer
+                        schema={this.state.schema}
+                        query={this.state.query}
+                        onEdit={this.handleEditQuery}
+                        onRunOperation={(operationName: string) =>
+                            this.handleRunQuery(operationName)
+                        }
+                        explorerIsOpen={this.state.explorerIsOpen}
+                        onToggleExplorer={this.handleToggleExplorer}
+                        getDefaultScalarArgValue={getDefaultScalarArgValue}
+                        makeDefaultArg={makeDefaultArg}
+                    />
+                </div>
                 <div className="historyPaneWrap" style={historyPaneStyle}>
                     <QueryHistory
                         ref={node => this._queryHistory = node}
@@ -1492,66 +1507,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
     private handleDocsResizeStart: MouseEventHandler<
         HTMLDivElement
     > = downEvent => {
-        downEvent.preventDefault();
-
-        const hadWidth = this.state.docExplorerWidth;
-        const offset = downEvent.clientX - getLeft(downEvent.target as HTMLElement);
-
-        let onMouseMove: OnMouseMoveFn = moveEvent => {
-            if (moveEvent.buttons === 0) {
-                return onMouseUp!();
-            }
-
-            const app = this.graphiqlContainer as HTMLElement;
-            const cursorPos = moveEvent.clientX - getLeft(app) - offset;
-            const docsSize = app.clientWidth - cursorPos;
-
-            if (docsSize < 100) {
-                if (typeof this.props.onToggleDocs === 'function') {
-                    this.props.onToggleDocs(!this.state.docExplorerOpen);
-                }
-                this._storage.set(
-                    'docExplorerOpen',
-                    JSON.stringify(this.state.docExplorerOpen)
-                );
-                this.setState({ docExplorerOpen: false });
-            } else {
-                this.setState({
-                    docExplorerOpen: true,
-                    docExplorerWidth: Math.min(docsSize, 650)
-                });
-                debounce(500, () =>
-                    this._storage.set(
-                        'docExplorerWidth',
-                        JSON.stringify(this.state.docExplorerWidth)
-                    )
-                )();
-            }
-            this._storage.set(
-                'docExplorerOpen',
-                JSON.stringify(this.state.docExplorerOpen)
-            );
-        };
-
-        let onMouseUp: OnMouseUpFn = () => {
-            if (!this.state.docExplorerOpen) {
-                this.setState({ docExplorerWidth: hadWidth });
-                debounce(500, () =>
-                    this._storage.set(
-                        'docExplorerWidth',
-                        JSON.stringify(this.state.docExplorerWidth)
-                    )
-                )();
-            }
-
-            document.removeEventListener('mousemove', onMouseMove!);
-            document.removeEventListener('mouseup', onMouseUp!);
-            onMouseMove = null;
-            onMouseUp = null;
-        };
-
-        document.addEventListener('mousemove', onMouseMove!);
-        document.addEventListener('mouseup', onMouseUp);
+        handlerResize.call(this, downEvent, 'docExplorerWidth', false);
     };
 
     private handleDocsResetResize = () => {
@@ -1562,6 +1518,24 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
             this._storage.set(
                 'docExplorerWidth',
                 JSON.stringify(this.state.docExplorerWidth)
+            )
+        )();
+    };
+
+    private handleExplorerResizeStart: MouseEventHandler<
+        HTMLDivElement
+    > = downEvent => {
+        handlerResize.call(this, downEvent, 'explorerWidth', true);
+    };
+
+    private handleExplorerResetResize = () => {
+        this.setState({
+            explorerWidth: DEFAULT_EXPLORER_WIDTH
+        });
+        debounce(500, () =>
+            this._storage.set(
+                'explorerWidth',
+                JSON.stringify(this.state.explorerWidth)
             )
         )();
     };
@@ -1815,4 +1789,41 @@ function isChildComponentType<T extends ComponentType>(
     }
 
     return child.type === component;
+}
+
+function handlerResize(downEvent, widthName: string, growRight = true, min = 150, max = 650) {
+    downEvent.preventDefault();
+
+    const initialWidth = this.state[widthName];
+    const startOffset = downEvent.pageX;
+
+    let onMouseMove: OnMouseMoveFn = moveEvent => {
+        if (moveEvent.buttons === 0) {
+            return onMouseUp!();
+        }
+
+        const delta = growRight ? moveEvent.pageX - startOffset : startOffset - moveEvent.pageX;
+        const newSize = Math.min(max, Math.max(min, initialWidth + delta));
+
+
+        this.setState({
+            [widthName]: Math.min(newSize, 650)
+        });
+        debounce(500, () =>
+            this._storage.set(
+                widthName,
+                JSON.stringify(this.state[widthName])
+            )
+        )();
+    };
+
+    let onMouseUp: OnMouseUpFn = () => {
+        document.removeEventListener('mousemove', onMouseMove!);
+        document.removeEventListener('mouseup', onMouseUp!);
+        onMouseMove = null;
+        onMouseUp = null;
+    };
+
+    document.addEventListener('mousemove', onMouseMove!);
+    document.addEventListener('mouseup', onMouseUp);
 }

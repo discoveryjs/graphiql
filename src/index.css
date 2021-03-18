@@ -16,6 +16,52 @@
 .graphiql-container .docExplorerWrap {
     z-index: 20000;
 }
+.graphiql-container .CodeMirror-lines {
+    padding: 10px 0;
+}
+
+.graphiql-container .docExplorerResizer {
+    width: 9px;
+    box-sizing: border-box;
+    border: solid transparent;
+    border-width: 0 2px;
+    background-color: black;
+    background-clip: content-box;
+    opacity: 0;
+    transition: opacity .2s;
+}
+.graphiql-container .docExplorerResizer:hover,
+.graphiql-container .docExplorerResizer:active {
+    opacity: .15;
+}
+
+.graphiql-container .explorer-wrapper {
+    position: relative;
+}
+.graphiql-container .explorer-wrapper .docExplorerResizer {
+    left: auto;
+    right: -5px;
+}
+.graphiql-container .explorer-wrapper .docExplorerWrap {
+    width: auto !important;
+    min-width: 0 !important;
+}
+
+.graphiql-container .execute-button {
+    outline: none;
+    border-radius: 50%;
+}
+.graphiql-container .toolbar-button {
+    outline: none;
+    border: 1px solid rgba(0, 0, 0, .2);
+    box-shadow: 0 1px 0 rgb(255, 255, 255, .7), inset 0 1px #fff;
+}
+.graphiql-container .execute-button:focus,
+.graphiql-container .execute-button:active,
+.graphiql-container .toolbar-button:focus,
+.graphiql-container .toolbar-button:active {
+    box-shadow: 0 0 1px 2.5px rgb(0 170 255 / 30%) !important;
+}
 
 /*
     Dark mode
@@ -40,9 +86,16 @@
 
 .graphiql-container.darkmode .toolbar-button {
     background: #1c2125 !important;
-    box-shadow: none !important;
+    box-shadow: none;
     color: #8f97a5 !important;
-    border: 1px solid #595f6d !important;
+    border: 1px solid #595f6d;
+}
+.graphiql-container.darkmode .toolbar-button:focus,
+.graphiql-container.darkmode .toolbar-button:active {
+    border-color: transparent;
+}
+.graphiql-container.darkmode .toolbar-button:active {
+    opacity: .8;
 }
 
 .graphiql-container.darkmode .resultWrap {
@@ -67,6 +120,9 @@
 
 .graphiql-container.darkmode .docExplorerHide {
     color: #606671;
+}
+.graphiql-container.darkmode .docExplorerResizer {
+    background-color: #eee;
 }
 
 .graphiql-container.darkmode .doc-explorer-title,
@@ -98,7 +154,7 @@
 
 .graphiql-container.darkmode .docExplorerWrap,
 .graphiql-container.darkmode .historyPaneWrap {
-    box-shadow: none;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, .2);
 }
 
 .graphiql-container.darkmode .docExplorerShow {
@@ -149,8 +205,15 @@
 .graphiql-container.darkmode .execute-button {
     background: #21262b;
     border: 1px solid rgb(91, 98, 107);
-    box-shadow: none !important;
+    box-shadow: none;
     fill: #c9ccd2;
+}
+.graphiql-container.darkmode .execute-button:focus,
+.graphiql-container.darkmode .execute-button:active {
+    border-color: transparent;
+}
+.graphiql-container.darkmode .execute-button:active {
+    opacity: .8;
 }
 
 .graphiql-container.darkmode .history-contents p {
