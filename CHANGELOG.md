@@ -4,7 +4,8 @@
 - Removed extra `.graphiql-container` wrapper element
 - Added explorer open state saving to localStorage
 - Added a resizer for explorer and tweaked resizer's appearance
-- Changed main exposing function to `createGraphiqlApp(endpoint, discovery, options)`; `options` is supported `rootEl` and `title` options for now.
+- Changed main exposing function to `createGraphiqlApp(endpoint, discovery, options)`; `options` is supported `rootEl` and `title` options for now
+- Fixed overscroll in Explorer when `Shift-Alt-LeftClick` is used
 
 ## 1.2.0 (10-03-2021)
 

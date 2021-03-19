@@ -46,6 +46,15 @@
     width: auto !important;
     min-width: 0 !important;
 }
+.graphiql-container .graphiql-explorer-root {
+    box-sizing: border-box;
+}
+.graphiql-container .graphiql-explorer-root :first-child {
+    flex: 1;
+}
+.graphiql-container .graphiql-explorer-root :last-child {
+    min-height: 0 !important;
+}
 
 .graphiql-container .execute-button {
     outline: none;
