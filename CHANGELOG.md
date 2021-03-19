@@ -1,4 +1,4 @@
-## next
+## 1.3.0 (19-03-2021)
 
 - Added dark mode
 - Removed extra `.graphiql-container` wrapper element
