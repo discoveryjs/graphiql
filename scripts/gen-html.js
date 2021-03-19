@@ -8,8 +8,8 @@ const {
 module.exports = function() {
     const template = fs.readFileSync(path.join(__dirname, '../src/index.html'), 'utf8');
     return template
-        .replace('%TITLE%', TITLE)
-        .replace('%GRAPHQL_ENDPOINT%', GRAPHQL_ENDPOINT);
+        .replace(/%TITLE%/g, TITLE)
+        .replace(/%GRAPHQL_ENDPOINT%/g, GRAPHQL_ENDPOINT);
 };
 
 if (require.main === module) {

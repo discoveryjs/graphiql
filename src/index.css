@@ -28,11 +28,11 @@
     background-color: black;
     background-clip: content-box;
     opacity: 0;
-    transition: opacity .2s;
 }
 .graphiql-container .docExplorerResizer:hover,
 .graphiql-container .docExplorerResizer:active {
     opacity: .15;
+    transition: opacity .2s;
 }
 
 .graphiql-container .explorer-wrapper {

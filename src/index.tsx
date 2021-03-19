@@ -31,6 +31,7 @@ const getFetcher = (endpoint: string) => (params: any) => {
 export type AppProps = {
     endpoint: string;
     discovery: any;
+    title?: string;
 };
 
 export type AppState = {
@@ -227,6 +228,7 @@ class App extends Component<AppProps, AppState> {
                 dzen={dzen}
                 darkmode={darkmode}
             >
+                {this.props.title ? <GraphiQL.Logo>{this.props.title}</GraphiQL.Logo> : null}
                 <GraphiQL.Toolbar>
                     <GraphiQL.Button
                         onClick={() => this._graphiql.handlePrettifyQuery()}
@@ -249,9 +251,15 @@ class App extends Component<AppProps, AppState> {
     }
 }
 
-export function graphiqlApp(endpoint: string, discovery?: Object, elem?: Element) {
+type Options = {
+    title?: string;
+    rootEl?: Element;
+};
+
+export function graphiqlApp(endpoint: string, discovery?: Object, opts?: Options) {
+    const { title, rootEl } = opts || {};
     return render(
-        <App endpoint={endpoint} discovery={discovery} />,
-        elem || document.getElementById('root')
+        <App endpoint={endpoint} discovery={discovery} title={title} />,
+        rootEl || document.getElementById('root')
     );
 }

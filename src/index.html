@@ -28,7 +28,7 @@
       const ENDPOINT = '%GRAPHQL_ENDPOINT%';
 
       if (ENDPOINT) {
-        graphiqlApp(ENDPOINT, createDiscoveryInstance())
+        graphiqlApp(ENDPOINT, createDiscoveryInstance(), { title: '%TITLE%' })
       } else {
         document.body.innerHTML = 'Error: GRAPHQL_ENDPOINT is not set!';
       }
