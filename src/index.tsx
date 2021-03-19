@@ -256,10 +256,11 @@ type Options = {
     rootEl?: Element;
 };
 
-export function graphiqlApp(endpoint: string, discovery?: Object, opts?: Options) {
-    const { title, rootEl } = opts || {};
+export function createGraphiqlApp(endpoint: string, discovery?: Object, options?: Options) {
+    const { title, rootEl } = options || {};
+
     return render(
-        <App endpoint={endpoint} discovery={discovery} title={title} />,
+        <App {...{endpoint, discovery, title}} />,
         rootEl || document.getElementById('root')
     );
 }
