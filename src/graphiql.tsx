@@ -76,10 +76,6 @@ if (majorVersion < 16) {
     );
 }
 
-declare namespace global {
-    export let g: GraphiQL;
-}
-
 export type Maybe<T> = T | null | undefined;
 
 type OnMouseMoveFn = Maybe<
@@ -316,8 +312,6 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
 
         // Utility for keeping CodeMirror correctly sized.
         this.codeMirrorSizer = new CodeMirrorSizer();
-
-        global.g = this;
     }
     // eslint-disable-next-line camelcase
     UNSAFE_componentWillMount() {
