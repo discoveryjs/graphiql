@@ -12,3 +12,24 @@
 .discovery {
     width: 100%;
 }
+
+.discovery[data-page="main"] {
+    --discovery-page-padding-top: 34px;
+    --discovery-page-padding-right: 12px;
+    --discovery-page-padding-bottom: 10px;
+    --discovery-page-padding-left: 12px;
+}
+
+.page-main .view-h1 {
+    margin: 0;
+    font-size: 18px;
+    padding: 8px 12px;
+}
+
+.page-report {
+    transition: padding-right .25s;
+}
+.discovery[data-page="report"]:not([data-dzen]) {
+    --discovery-page-padding-right: 12px;
+}
+
