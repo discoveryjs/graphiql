@@ -1,3 +1,10 @@
+## 1.4.0 (14-05-2021)
+
+- New option `endpointHeaders` that allows to specify additional headers for GraphQL requests
+- New option `extraToolbarItems` for extending GraphiQL toolbar with additional components
+- New option `logoUrl` which you can use to show your logo in the toolbar
+- Exported `React`, `ReactDOM`, `App`, `GraphiQL` from main bundle for better customization 
+
 ## 1.3.0 (19-03-2021)
 
 - Added dark mode

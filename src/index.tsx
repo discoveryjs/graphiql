@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
-import { render } from 'react-dom';
+import ReactDOM, { render } from 'react-dom';
 import { GraphiQL } from './graphiql';
 import { buildClientSchema, getIntrospectionQuery, parse } from 'graphql';
 import * as base64 from '@discoveryjs/discovery/src/core/utils/base64';
 
-const getFetcher = (endpoint: string) => (params: any) => {
+const getFetcher = (endpoint: string, extraHeaders: Headers) => (params: any) => {
     return fetch(
         endpoint,
         {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                ...extraHeaders
             },
             body: JSON.stringify(params)
         }
@@ -30,8 +31,11 @@ const getFetcher = (endpoint: string) => (params: any) => {
 
 export type AppProps = {
     endpoint: string;
+    endpointHeaders?: Headers;
     discovery: any;
     title?: string;
+    logoUrl?: string;
+    extraToolbarItems?: [Component]
 };
 
 export type AppState = {
@@ -45,14 +49,16 @@ export type AppState = {
 
 class App extends Component<AppProps, AppState> {
     endpoint: string;
+    endpointHeaders: Headers;
     discovery: any;
     _graphiql: any;
 
     constructor(props: AppProps) {
         super(props);
 
-        const { endpoint, discovery } = props;
+        const { endpointHeaders, endpoint, discovery } = props;
         this.endpoint = endpoint;
+        this.endpointHeaders = endpointHeaders;
         this.discovery = discovery;
 
         this.state = {
@@ -82,7 +88,7 @@ class App extends Component<AppProps, AppState> {
         });
 
         if (this.state.query) {
-            this.getDataFetcher(endpoint)({
+            this.getDataFetcher(endpoint, this.endpointHeaders)({
                 query: this.state.query,
                 variables: this.state.variables || null
             });
@@ -100,7 +106,7 @@ class App extends Component<AppProps, AppState> {
     }
 
     componentDidMount() {
-        getFetcher(this.endpoint)({
+        getFetcher(this.endpoint, this.endpointHeaders)({
             query: getIntrospectionQuery()
         }).then(result => {
             const editor = this._graphiql.getQueryEditor();
@@ -190,7 +196,7 @@ class App extends Component<AppProps, AppState> {
         });
     }
 
-    getDataFetcher = (endpoint: string) => (params: any) => {
+    getDataFetcher = (endpoint: string, extraHeaders: Headers) => (params: any) => {
         return this.discovery.loadDataFromUrl(
             endpoint,
             'data',
@@ -199,7 +205,8 @@ class App extends Component<AppProps, AppState> {
                     method: 'POST',
                     headers: {
                         Accept: 'application/json',
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        ...extraHeaders
                     },
                     body: JSON.stringify(params)
                 },
@@ -218,7 +225,7 @@ class App extends Component<AppProps, AppState> {
         return (
             <GraphiQL
                 ref={ref => this._graphiql = ref}
-                fetcher={this.getDataFetcher(this.endpoint)}
+                fetcher={this.getDataFetcher(this.endpoint, this.endpointHeaders)}
                 schema={schema}
                 query={query}
                 variables={variables}
@@ -228,7 +235,9 @@ class App extends Component<AppProps, AppState> {
                 dzen={dzen}
                 darkmode={darkmode}
             >
-                {this.props.title ? <GraphiQL.Logo>{this.props.title}</GraphiQL.Logo> : null}
+                {this.props.title || this.props.logoUrl
+                    ? <GraphiQL.Logo>{this.props.logoUrl ? <img src={this.props.logoUrl} /> : this.props.title}</GraphiQL.Logo> : null
+                }
                 <GraphiQL.Toolbar>
                     <GraphiQL.Button
                         onClick={() => this._graphiql.handlePrettifyQuery()}
@@ -245,6 +254,10 @@ class App extends Component<AppProps, AppState> {
                         label='Explorer'
                         title='Toggle Explorer'
                     />
+                    {this.props.extraToolbarItems && this.props.extraToolbarItems.length
+                        ? <React.Fragment>
+                            {React.Children.toArray(this.props.extraToolbarItems)}
+                        </React.Fragment> : null}
                 </GraphiQL.Toolbar>
             </GraphiQL>
         );
@@ -253,14 +266,19 @@ class App extends Component<AppProps, AppState> {
 
 type Options = {
     title?: string;
+    logoUrl?: string;
+    extraToolbarItems?: [Component];
+    endpointHeaders?: Headers;
     rootEl?: Element;
 };
 
-export function createGraphiqlApp(endpoint: string, discovery?: Object, options?: Options) {
-    const { title, rootEl } = options || {};
+function createGraphiqlApp(endpoint: string, discovery?: Object, options?: Options) {
+    const { title, endpointHeaders, rootEl, logoUrl, extraToolbarItems } = options || {};
 
     return render(
-        <App {...{endpoint, discovery, title}} />,
+        <App {...{endpoint, endpointHeaders, discovery, title, logoUrl, extraToolbarItems}} />,
         rootEl || document.getElementById('root')
     );
 }
+
+export { React, ReactDOM, App, GraphiQL, createGraphiqlApp };
