@@ -31,7 +31,7 @@ const getFetcher = (endpoint: string, extraHeaders: Headers) => (params: any) =>
 
 export type AppProps = {
     endpoint: string;
-    headers?: Headers;
+    endpointHeaders?: Headers;
     discovery: any;
     title?: string;
     logoUrl?: string;
@@ -49,16 +49,16 @@ export type AppState = {
 
 class App extends Component<AppProps, AppState> {
     endpoint: string;
-    headers: Headers;
+    endpointHeaders: Headers;
     discovery: any;
     _graphiql: any;
 
     constructor(props: AppProps) {
         super(props);
 
-        const { headers, endpoint, discovery } = props;
+        const { endpointHeaders, endpoint, discovery } = props;
         this.endpoint = endpoint;
-        this.headers = headers;
+        this.endpointHeaders = endpointHeaders;
         this.discovery = discovery;
 
         this.state = {
@@ -88,7 +88,7 @@ class App extends Component<AppProps, AppState> {
         });
 
         if (this.state.query) {
-            this.getDataFetcher(endpoint, this.headers)({
+            this.getDataFetcher(endpoint, this.endpointHeaders)({
                 query: this.state.query,
                 variables: this.state.variables || null
             });
@@ -106,7 +106,7 @@ class App extends Component<AppProps, AppState> {
     }
 
     componentDidMount() {
-        getFetcher(this.endpoint, this.headers)({
+        getFetcher(this.endpoint, this.endpointHeaders)({
             query: getIntrospectionQuery()
         }).then(result => {
             const editor = this._graphiql.getQueryEditor();
@@ -225,7 +225,7 @@ class App extends Component<AppProps, AppState> {
         return (
             <GraphiQL
                 ref={ref => this._graphiql = ref}
-                fetcher={this.getDataFetcher(this.endpoint, this.headers)}
+                fetcher={this.getDataFetcher(this.endpoint, this.endpointHeaders)}
                 schema={schema}
                 query={query}
                 variables={variables}
@@ -268,17 +268,17 @@ type Options = {
     title?: string;
     logoUrl?: string;
     extraToolbarItems?: [Component];
-    headers?: Headers;
+    endpointHeaders?: Headers;
     rootEl?: Element;
 };
 
 function createGraphiqlApp(endpoint: string, discovery?: Object, options?: Options) {
-    const { title, headers, rootEl, logoUrl, extraToolbarItems } = options || {};
+    const { title, endpointHeaders, rootEl, logoUrl, extraToolbarItems } = options || {};
 
     return render(
-        <App {...{endpoint, headers, discovery, title, logoUrl, extraToolbarItems}} />,
+        <App {...{endpoint, endpointHeaders, discovery, title, logoUrl, extraToolbarItems}} />,
         rootEl || document.getElementById('root')
     );
 }
 
-export { React, ReactDOM, GraphiQL, createGraphiqlApp };
+export { React, ReactDOM, App, GraphiQL, createGraphiqlApp };
