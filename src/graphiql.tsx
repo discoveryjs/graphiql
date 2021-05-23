@@ -1251,7 +1251,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
         editor.setValue(print(mergeAST(ast, this.state.schema)));
     };
 
-    handleEditQuery = debounce(100, (value: string) => {
+    handleEditQuery = (value: string) => {
         const queryFacts = this._updateQueryFacts(
             value,
             this.state.operationName,
@@ -1266,7 +1266,7 @@ export class GraphiQL extends React.Component<GraphiQLProps, GraphiQLState> {
         if (this.props.onEditQuery) {
             return this.props.onEditQuery(value, queryFacts?.documentAST);
         }
-    });
+    };
 
     handleCopyQuery = () => {
         const editor = this.getQueryEditor();
