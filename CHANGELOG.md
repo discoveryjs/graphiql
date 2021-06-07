@@ -1,3 +1,7 @@
+## 1.4.1 (07-06-2021)
+
+- Removed debounce when editing the query
+
 ## 1.4.0 (14-05-2021)
 
 - New option `endpointHeaders` that allows to specify additional headers for GraphQL requests

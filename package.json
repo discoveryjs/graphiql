@@ -1,6 +1,6 @@
 {
   "name": "@discoveryjs/graphiql",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "license": "MIT",
   "description": "A GraphiQL docker app",
   "main": "dist/index.js",
