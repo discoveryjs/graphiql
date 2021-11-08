@@ -29,7 +29,7 @@
     "esbuild": "^0.9.0",
     "eslint": "^7.22.0",
     "express": "^4.17.1",
-    "graphiql": "1.4.0-rc.1",
+    "graphiql": "1.4.7",
     "graphiql-explorer": "^0.6.2",
     "graphql": "14.5.8",
     "punycode": "^2.1.1",
